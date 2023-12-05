@@ -2,9 +2,25 @@
 import React from 'react'
 import { Button, Checkbox, Col, Form, Input, Row, Typography } from 'antd';
 import { Link } from 'react-router-dom';
+import { useFormik } from 'formik';
 
 
 const Register = () => {
+// username, password, email, confirmPassword, isPublic checkbox, fullName
+    const formik = useFormik({
+        initialValues:{
+          'username':'',
+          'password':'',
+          'email':'',
+          'confirmPassword':'',
+          'isPublic':false,
+          'fullName':'',
+        },
+        onSubmit: (values,actions)=>{
+
+        }
+    })
+
     return (
 
         <Col style={{ marginTop: '200px' }} span={8} offset={8}>
@@ -30,8 +46,7 @@ const Register = () => {
                 initialValues={{
                     remember: true,
                 }}
-                onFinish={() => { }}
-                onFinishFailed={() => { }}
+                onSubmit={formik.handleSubmit}
                 autoComplete="off"
             >
 
@@ -43,11 +58,27 @@ const Register = () => {
                 </Form.Item>
 
                 <Form.Item
+                    label={<label style={{ color: 'white', fontSize: '20px' }}>Full Name</label>}
+                    name="fullName"
+                >
+                    <Input/>
+                </Form.Item>
+
+                <Form.Item
                     label={<label style={{ color: 'white', fontSize: '20px' }}>Password</label>}
                     name="password"
                 >
                     <Input.Password />
                 </Form.Item>
+
+                <Form.Item
+                    label={<label style={{ color: 'white', fontSize: '20px' }}>Confirm Password</label>}
+                    name="confirmPassword"
+                >
+                    <Input.Password />
+                </Form.Item>
+
+                
 
 
 
