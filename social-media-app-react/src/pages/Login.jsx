@@ -1,6 +1,7 @@
 
 import React from 'react'
 import { Button, Checkbox, Col, Form, Input, Row,Typography  } from 'antd';
+import { Link } from 'react-router-dom';
 
 
 const Login = () => {
@@ -8,7 +9,11 @@ const Login = () => {
    
       <Col style={{marginTop:'200px'}} span={8} offset={8}>
 
-        <Typography.Title style={{transform:'translateX(53%)',color:'white'}} >Login</Typography.Title>
+       <Row>
+        <Col span={10} offset={12}>
+        <Typography.Title style={{marginLeft:'10px',color:'white'}} >Login</Typography.Title>
+        </Col>
+       </Row>
 
       <Form
     name="basic"
@@ -56,6 +61,14 @@ const Login = () => {
       </Button>
     </Form.Item>
   </Form>
+
+  
+  <Row>
+    <Col offset={8} span={16}>
+    <Typography style={{color:'white'}}>If you do not have account? You can <Link to={"/register"}>Create Account</Link>  </Typography>
+    </Col>
+  </Row>
+  
 
       </Col>
    
