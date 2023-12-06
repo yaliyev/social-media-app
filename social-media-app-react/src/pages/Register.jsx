@@ -26,6 +26,7 @@ const Register = () => {
             const user = {
                 username: values.username,
                 password: values.password,
+                profilePicture: 'https://www.iconpacks.net/icons/2/free-user-icon-3296-thumb.png',
                 email: values.email,
                 isPublic: values.isPublic,
                 fullName: values.fullName,
