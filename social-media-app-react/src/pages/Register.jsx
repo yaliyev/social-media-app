@@ -1,24 +1,46 @@
 
 import React from 'react'
+import Swal from 'sweetalert2'
 import { Button, Checkbox, Col, Form, Input, Row, Typography } from 'antd';
 import { Link } from 'react-router-dom';
 import { useFormik } from 'formik';
-
+import { register } from '../services/api/user_request';
+import { registerUserSchema } from '../validation/registerUserValidation';
 
 const Register = () => {
-// username, password, email, confirmPassword, isPublic checkbox, fullName
+    // username, password, email, confirmPassword, isPublic checkbox, fullName
     const formik = useFormik({
-        initialValues:{
-          'username':'',
-          'password':'',
-          'email':'',
-          'confirmPassword':'',
-          'isPublic':false,
-          'fullName':'',
+        initialValues: {
+            'username': '',
+            'password': '',
+            'email': '',
+            'confirmPassword': '',
+            'isPublic': 'false',
+            'fullName': '',
         },
-        onSubmit: (values,actions)=>{
+        onSubmit: async(values, actions) => {
 
-        }
+            const user = {
+                username: values.username,
+                password: values.password,
+                email: values.email,
+                isPublic: values.isPublic,
+                fullName: values.fullName,
+            }
+
+            const responsePost = await register(user);
+ 
+            if(responsePost.status == 201){
+
+                Swal.fire({
+                    icon: "success",
+                    title: "Register",
+                    html: "User has been registered"
+                   
+                  });
+            }
+        },
+        validationSchema: registerUserSchema
     })
 
     return (
@@ -46,7 +68,7 @@ const Register = () => {
                 initialValues={{
                     remember: true,
                 }}
-                onSubmit={formik.handleSubmit}
+                onFinish={formik.handleSubmit}
                 autoComplete="off"
             >
 
@@ -54,31 +76,84 @@ const Register = () => {
                     label={<label style={{ color: 'white', fontSize: '20px' }}>Username</label>}
                     name="username"
                 >
-                    <Input />
+                    <Input name='username' value={formik.values.username} onBlur={formik.handleBlur} onChange={formik.handleChange} />
+                   
                 </Form.Item>
+                <Row>
+                    <Col style={{marginTop:'-20px',marginBottom:'10px'}} offset={8} span={4}>
+                    {formik.errors.username&&formik.touched.username && <div style={{color:'red'}}>{formik.errors.username}</div>}
+                    </Col>
+                </Row>
+                
 
                 <Form.Item
                     label={<label style={{ color: 'white', fontSize: '20px' }}>Full Name</label>}
                     name="fullName"
                 >
-                    <Input/>
+                    <Input name='fullName' value={formik.values.fullName} onBlur={formik.handleBlur} onChange={formik.handleChange} />
+                    
                 </Form.Item>
+                <Row>
+                    <Col style={{marginTop:'-20px',marginBottom:'10px'}} offset={8} span={4}>
+                    {formik.errors.fullName&&formik.touched.fullName && <div style={{color:'red'}}>{formik.errors.fullName}</div>}
+                    </Col>
+                </Row>
+
+                <Form.Item
+                    label={<label style={{ color: 'white', fontSize: '20px' }}>Email</label>}
+                    name="email"
+                >
+                    <Input name='email' value={formik.values.email} onBlur={formik.handleBlur} onChange={formik.handleChange} />
+                    
+                </Form.Item>
+                <Row>
+                    <Col style={{marginTop:'-20px',marginBottom:'10px'}} offset={8} span={4}>
+                    {formik.errors.email&&formik.touched.email && <div style={{color:'red'}}>{formik.errors.email}</div>}
+                    </Col>
+                </Row>
+                
 
                 <Form.Item
                     label={<label style={{ color: 'white', fontSize: '20px' }}>Password</label>}
                     name="password"
                 >
-                    <Input.Password />
+                    <Input.Password name='password' value={formik.values.password} onBlur={formik.handleBlur} onChange={formik.handleChange} />
                 </Form.Item>
+                <Row>
+                    <Col style={{marginTop:'-20px',marginBottom:'10px'}} offset={8} span={16}>
+                    {formik.errors.password&&formik.touched.password && <div style={{color:'red'}}>{formik.errors.password}</div>}
+                    </Col>
+                </Row>
 
                 <Form.Item
                     label={<label style={{ color: 'white', fontSize: '20px' }}>Confirm Password</label>}
                     name="confirmPassword"
                 >
-                    <Input.Password />
+                    <Input.Password name='confirmPassword' value={formik.values.confirmPassword} onBlur={formik.handleBlur} onChange={formik.handleChange} />
                 </Form.Item>
 
-                
+                <Row>
+                    <Col style={{marginTop:'-20px',marginBottom:'10px'}} offset={8} span={16}>
+                    {formik.errors.confirmPassword&&formik.touched.confirmPassword && <div style={{color:'red'}}>{formik.errors.confirmPassword}</div>}
+                    </Col>
+                </Row>
+
+                <Form.Item
+                    label={<label style={{ color: 'white', fontSize: '20px' }}>is Public</label>}
+                    name="isPublic"
+                >
+                    <input type='checkbox' onChange={() => {
+                        let a = formik.values.isPublic;
+                        if (a == 'false') {
+                            formik.setFieldValue('isPublic', 'true')
+                        } else {
+                            formik.setFieldValue('isPublic', 'false')
+                        }
+
+                    }} values={formik.values.isPublic} name='isPublic' ></input>
+                </Form.Item>
+
+
 
 
 
