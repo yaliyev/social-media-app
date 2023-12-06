@@ -12,7 +12,7 @@ function App() {
 
   return (
     <>
-      <Row className="background-divider background">
+      <Row>
 
         <RouterProvider router={routes}></RouterProvider>
 
