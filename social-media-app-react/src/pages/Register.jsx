@@ -2,12 +2,15 @@
 import React from 'react'
 import Swal from 'sweetalert2'
 import { Button, Checkbox, Col, Form, Input, Row, Typography } from 'antd';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
-import { register } from '../services/api/user_request';
+import { isExist, register } from '../services/api/user_request';
 import { registerUserSchema } from '../validation/registerUserValidation';
 
 const Register = () => {
+
+    const navigateTo = useNavigate();
+
     // username, password, email, confirmPassword, isPublic checkbox, fullName
     const formik = useFormik({
         initialValues: {
@@ -28,17 +31,47 @@ const Register = () => {
                 fullName: values.fullName,
             }
 
-            const responsePost = await register(user);
- 
-            if(responsePost.status == 201){
+            const isExistResult  = await isExist(user);
 
-                Swal.fire({
-                    icon: "success",
-                    title: "Register",
-                    html: "User has been registered"
-                   
-                  });
+            console.log(isExistResult);
+
+            if(!isExistResult.isExistUsername && !isExistResult.isExistEmail){
+                const responsePost = await register(user);
+ 
+                if(responsePost.status == 201){
+    
+                    Swal.fire({
+                        icon: "success",
+                        title: "Register",
+                        html: "User has been registered",
+                        timer: 1300
+                      }).then(()=>{
+                        actions.resetForm()
+                        navigateTo("/login");
+                      });
+                }
+            }else{
+                if(isExistResult.isExistUsername){
+                    Swal.fire({
+                        icon: "error",
+                        title: "Register",
+                        html: `${user.username} is exist already.Try another username`,
+                        timer: 1300
+                      })
+                }
+                console.log(user);
+                if(isExistResult.isExistEmail){
+                    Swal.fire({
+                        icon: "error",
+                        title: "Register",
+                        html: `${user.email} is exist already.Try another email`,
+                        timer: 1300
+                      })
+                }
             }
+           
+
+            
         },
         validationSchema: registerUserSchema
     })
@@ -107,7 +140,7 @@ const Register = () => {
                     
                 </Form.Item>
                 <Row>
-                    <Col style={{marginTop:'-20px',marginBottom:'10px'}} offset={8} span={4}>
+                    <Col style={{marginTop:'-20px',marginBottom:'10px'}} offset={8} span={12}>
                     {formik.errors.email&&formik.touched.email && <div style={{color:'red'}}>{formik.errors.email}</div>}
                     </Col>
                 </Row>

@@ -6,5 +6,34 @@ async function register(user){
    return await  axios.post(API_URL,user);
 }
 
-export {register}
+async function login(user){
+   let data = await axios.get(API_URL).then(response=>response.data);
+   let resultUser = data.find((userIterated)=>userIterated.username == user.username && userIterated.password == user.password);
+
+   if(resultUser == undefined){
+       return false;
+   }else{
+       return true;
+   }
+}
+
+async function isExist(user){
+    const userExistDetails = {isExistUsername: false,isExistEmail: false};
+   let data = await axios.get(API_URL).then(response=>response.data);
+   let resultUser = data.find((userIterated)=>userIterated.username == user.username);
+   let resultUserEmail = data.find((userIterated)=>userIterated.email == user.email);
+   if(resultUser != undefined){
+       userExistDetails.isExistUsername = true;
+   }
+   if(resultUserEmail != undefined){
+       userExistDetails.isExistEmail = true;
+   }
+
+   return userExistDetails;
+
+
+}
+
+
+export {register,login,isExist}
 
