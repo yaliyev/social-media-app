@@ -17,6 +17,14 @@ async function login(user){
    }
 }
 
+async function getUser(user){
+    let data = await axios.get(API_URL).then(response=>response.data);
+    let resultUser = data.find((userIterated)=>userIterated.username == user.username);
+
+    return resultUser;
+
+}
+
 async function isExist(user){
     const userExistDetails = {isExistUsername: false,isExistEmail: false};
    let data = await axios.get(API_URL).then(response=>response.data);
@@ -35,5 +43,5 @@ async function isExist(user){
 }
 
 
-export {register,login,isExist}
+export {register,login,isExist,getUser}
 

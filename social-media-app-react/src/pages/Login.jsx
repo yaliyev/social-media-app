@@ -2,12 +2,19 @@
 import React from 'react'
 import Swal from 'sweetalert2'
 import { Button, Checkbox, Col, Form, Input, Row, Typography } from 'antd';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { loginUserSchema } from '../validation/loginUserValidation';
 import { useFormik } from 'formik';
-import { isExist, login } from '../services/api/user_request';
-
+import { getUser, isExist, login } from '../services/api/user_request';
+import { useDispatch, useSelector } from 'react-redux';
+import { sign_in } from '../redux/slices/userSlice';
 const Login = () => {
+
+  
+  let user = useSelector((state)=>state.user.user);
+  
+  let dispatch = useDispatch();
+  const navigateTo = useNavigate();
 
   const formik = useFormik({
     initialValues: {
@@ -24,11 +31,15 @@ const Login = () => {
       const loginUserResult = await login(user);
       
       if(loginUserResult){
+        const userFullData = await getUser(user);
+        dispatch(sign_in(userFullData));
         Swal.fire({
           icon: "success",
           title: "Login",
           html: "User has been logined",
-          timer: 1300
+          timer: 1600
+        }).then(()=>{
+          navigateTo("/user");
         })
       }else{
         Swal.fire({
