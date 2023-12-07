@@ -46,7 +46,7 @@ const Login = () => {
           html: "User has been logined",
           timer: 1600
         }).then(()=>{
-          localStorage.setItem("social-media-app-yagub-user-status",JSON.stringify({username:userFullData.username}));
+          localStorage.setItem("social-media-app-yagub-user-status",JSON.stringify({id:userFullData.id}));
           navigateTo("/user");
         })
       }else{

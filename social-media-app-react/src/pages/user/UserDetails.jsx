@@ -38,8 +38,8 @@ const UserDetails = () => {
     enableReinitialize: true,
     onSubmit: async (values, actions) => {
 
-      
-      
+
+
       const editedUser = { ...user.userObject };
 
       editedUser.username = values.username;
@@ -50,12 +50,44 @@ const UserDetails = () => {
       editedUser.profilePicture = values.profilePicture;
 
 
-      const isExistResult  = await isExist(editedUser);
+      const isExistResult = await isExist(editedUser);
 
-      
 
-      if(!isExistResult.isExistUsername && !isExistResult.isExistEmail){
+      if (user.userObject.username != editedUser.username && user.userObject.email != editedUser.email) {
+        if (!isExistResult.isExistUsername && !isExistResult.isExistEmail) {
 
+          const responsePutUser = await putUser(editedUser);
+
+          dispatch(putUserReducer(editedUser));
+          setIsUserDetailModelOpen(false);
+          Swal.fire({
+            icon: "success",
+            title: "Edit user",
+            html: "User details have been changed",
+            timer: 1600
+          })
+
+        } else {
+          if (isExistResult.isExistUsername) {
+            Swal.fire({
+              icon: "error",
+              title: "Register",
+              html: `${editedUser.username} is exist already.Try another username`,
+              timer: 1300
+            })
+          }
+          if (isExistResult.isExistEmail) {
+            Swal.fire({
+              icon: "error",
+              title: "Register",
+              html: `${editedUser.email} is exist already.Try another email`,
+              timer: 1300
+            })
+          }
+        }
+      }else if(user.userObject.username != editedUser.username ){
+       if(!isExistResult.isExistUsername){
+        
         const responsePutUser = await putUser(editedUser);
 
         dispatch(putUserReducer(editedUser));
@@ -66,27 +98,52 @@ const UserDetails = () => {
           html: "User details have been changed",
           timer: 1600
         })
-
-      }else{
-        if(isExistResult.isExistUsername){
+       }else{
+        Swal.fire({
+          icon: "error",
+          title: "Register",
+          html: `${editedUser.username} is exist already.Try another username`,
+          timer: 1300
+        })
+       }
+      }else if(user.userObject.email != editedUser.email ){
+        if(!isExistResult.isExistEmail){
+         
+         const responsePutUser = await putUser(editedUser);
+ 
+         dispatch(putUserReducer(editedUser));
+         setIsUserDetailModelOpen(false);
+         Swal.fire({
+           icon: "success",
+           title: "Edit user",
+           html: "User details have been changed",
+           timer: 1600
+         })
+        }else{
           Swal.fire({
-              icon: "error",
-              title: "Register",
-              html: `${editedUser.username} is exist already.Try another username`,
-              timer: 1300
-            })
-      }
-      if(isExistResult.isExistEmail){
-          Swal.fire({
-              icon: "error",
-              title: "Register",
-              html: `${editedUser.email} is exist already.Try another email`,
-              timer: 1300
-            })
-      }
+            icon: "error",
+            title: "Register",
+            html: `${editedUser.email} is exist already.Try another email`,
+            timer: 1300
+          })
+        }
+       }
+      
+      else{
+        const responsePutUser = await putUser(editedUser);
+
+        dispatch(putUserReducer(editedUser));
+        setIsUserDetailModelOpen(false);
+        Swal.fire({
+          icon: "success",
+          title: "Edit user",
+          html: "User details have been changed",
+          timer: 1600
+        })
       }
 
-     
+
+
 
 
     },

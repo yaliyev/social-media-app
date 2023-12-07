@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getUser } from "../../services/api/user_request";
+import { getUser, getUserById } from "../../services/api/user_request";
 
 const initialState = {
     user:{
@@ -35,7 +35,7 @@ export const loadUserFromLocalStorage = () => async (dispatch) => {
         if (storedUserObject != "null") {
             let storedUserJSObject = JSON.parse(storedUserObject);
             // dispatch(setUserLoading(true)); 
-            const response = await getUser(storedUserJSObject); 
+            const response = await getUserById(storedUserJSObject.id); 
             dispatch(putUserReducer(response)); 
         }
     

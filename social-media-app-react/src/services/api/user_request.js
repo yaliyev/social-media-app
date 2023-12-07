@@ -28,6 +28,12 @@ async function getUser(user){
     return resultUser;
 
 }
+async function getUserById(id){
+    let data = await axios.get(API_URL).then(response=>response.data);
+    let resultUser = data.find((userIterated)=>userIterated.id == id);
+
+    return resultUser;
+}
 
 async function isExist(user){
     const userExistDetails = {isExistUsername: false,isExistEmail: false};
@@ -47,5 +53,5 @@ async function isExist(user){
 }
 
 
-export {register,login,isExist,getUser,putUser}
+export {register,login,isExist,getUser,getUserById,putUser}
 
