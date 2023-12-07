@@ -10,7 +10,8 @@ import { registerUserSchema } from '../validation/registerUserValidation';
 const Register = () => {
 
     const navigateTo = useNavigate();
-
+//id, username, fullName, email, password, bio, profilePicture, followers:[], 
+//followings:[], requests:[], posts:[], stories:[], isVerified, isPublic, isAdmin
     // username, password, email, confirmPassword, isPublic checkbox, fullName
     const formik = useFormik({
         initialValues: {
@@ -23,12 +24,21 @@ const Register = () => {
         },
         onSubmit: async(values, actions) => {
 
+            let isPublicVal = values.isPublic;
+            console.log(isPublicVal);
+            
+            if(isPublicVal == 'false'){
+                isPublicVal = false;
+            }else{
+                isPublicVal = true;
+            }
+
             const user = {
                 username: values.username,
                 password: values.password,
                 profilePicture: 'https://www.iconpacks.net/icons/2/free-user-icon-3296-thumb.png',
                 email: values.email,
-                isPublic: values.isPublic,
+                isPublic: isPublicVal,
                 fullName: values.fullName,
             }
 
