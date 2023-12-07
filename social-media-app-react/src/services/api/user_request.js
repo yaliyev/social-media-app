@@ -1,9 +1,13 @@
 import axios from "axios";
 
-const API_URL = "https://656ea41d6529ec1c62366b24.mockapi.io/users";
+const API_URL = "https://656ea41d6529ec1c62366b24.mockapi.io/users/";
 
 async function register(user){
    return await  axios.post(API_URL,user);
+}
+
+async function putUser(user){
+    return await axios.put(API_URL+user.id,user);
 }
 
 async function login(user){
@@ -43,5 +47,5 @@ async function isExist(user){
 }
 
 
-export {register,login,isExist,getUser}
+export {register,login,isExist,getUser,putUser}
 

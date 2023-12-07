@@ -1,36 +1,92 @@
 import { Button, Col, Modal, Row, Form, Input, Checkbox } from 'antd'
 import React, { useEffect, useState } from 'react'
+import Swal from 'sweetalert2'
 import { EditOutlined, EllipsisOutlined, SettingOutlined, FileImageOutlined } from '@ant-design/icons';
 import { Avatar, Card } from 'antd';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useFormik, useFormikContext } from 'formik';
 import { editUserSchema } from '../../validation/editUserValidation';
+import { isExist, putUser } from '../../services/api/user_request';
+import { putUserReducer } from '../../redux/slices/userSlice';
 const { Meta } = Card;
 
 const UserDetails = () => {
 
   let user = useSelector((state) => state.user.user);
 
+
+  let dispatch = useDispatch();
+
   const [isUserDetailModelOpen, setIsUserDetailModelOpen] = useState(false);
-  const [resetEditFormCounter,setResetEditFormCounter] = useState(0);
+  const [resetEditFormCounter, setResetEditFormCounter] = useState(0);
   const navigateTo = useNavigate();
- 
+
   let formik = useFormik({
 
     initialValues: {
-      
+
       'username': '',
-        'fullName': '',
-        'email': '',
-        'password': '',
-        'bio': '',
-        'profilePicture': ''
-        
-      
+      'fullName': '',
+      'email': '',
+      'password': '',
+      'bio': '',
+      'profilePicture': ''
+
+
     },
-    enableReinitialize:true,
+    enableReinitialize: true,
     onSubmit: async (values, actions) => {
+
+      
+      
+      const editedUser = { ...user.userObject };
+
+      editedUser.username = values.username;
+      editedUser.fullName = values.fullName;
+      editedUser.email = values.email;
+      editedUser.password = values.password;
+      editedUser.bio = values.bio;
+      editedUser.profilePicture = values.profilePicture;
+
+
+      const isExistResult  = await isExist(editedUser);
+
+      
+
+      if(!isExistResult.isExistUsername && !isExistResult.isExistEmail){
+
+        const responsePutUser = await putUser(editedUser);
+
+        dispatch(putUserReducer(editedUser));
+        setIsUserDetailModelOpen(false);
+        Swal.fire({
+          icon: "success",
+          title: "Edit user",
+          html: "User details have been changed",
+          timer: 1600
+        })
+
+      }else{
+        if(isExistResult.isExistUsername){
+          Swal.fire({
+              icon: "error",
+              title: "Register",
+              html: `${editedUser.username} is exist already.Try another username`,
+              timer: 1300
+            })
+      }
+      if(isExistResult.isExistEmail){
+          Swal.fire({
+              icon: "error",
+              title: "Register",
+              html: `${editedUser.email} is exist already.Try another email`,
+              timer: 1300
+            })
+      }
+      }
+
+     
 
 
     },
@@ -42,7 +98,7 @@ const UserDetails = () => {
 
       navigateTo("/login")
 
-    } else{
+    } else {
       formik.setValues({
         'username': user.userObject.username,
         'fullName': user.userObject.fullName,
@@ -64,7 +120,7 @@ const UserDetails = () => {
       {user.userObject ?
         <>
 
-          <Modal title={<h3 style={{ textAlign: 'center' }}>Edit User</h3>} open={isUserDetailModelOpen} onCancel={() => { setIsUserDetailModelOpen(false),setResetEditFormCounter(resetEditFormCounter + 1) }} footer="" >
+          <Modal title={<h3 style={{ textAlign: 'center' }}>Edit User</h3>} open={isUserDetailModelOpen} onCancel={() => { setIsUserDetailModelOpen(false), setResetEditFormCounter(resetEditFormCounter + 1) }} footer="" >
             <Form
               name="basic"
               labelCol={{
@@ -82,7 +138,7 @@ const UserDetails = () => {
             >
               <Form.Item
                 label="Username"
-                
+
               >
 
                 <Input name="username" value={formik.values.username} onBlur={formik.handleBlur} onChange={formik.handleChange} />
@@ -96,7 +152,7 @@ const UserDetails = () => {
 
               <Form.Item
                 label="Fullname"
-                
+
 
               >
                 <Input name="fullName" value={formik.values.fullName} onBlur={formik.handleBlur} onChange={formik.handleChange} />
@@ -108,7 +164,7 @@ const UserDetails = () => {
               </Row>
               <Form.Item
                 label="Email"
-                
+
 
               >
                 <Input name="email" value={formik.values.email} onBlur={formik.handleBlur} onChange={formik.handleChange} />
@@ -120,7 +176,7 @@ const UserDetails = () => {
               </Row>
               <Form.Item
                 label="Password"
-               
+
 
               >
                 <Input.Password name="password" value={formik.values.password} onBlur={formik.handleBlur} onChange={formik.handleChange} />
@@ -132,7 +188,7 @@ const UserDetails = () => {
               </Row>
               <Form.Item
                 label="Bio"
-                
+
 
               >
                 <Input name="bio" value={formik.values.bio} onBlur={formik.handleBlur} onChange={formik.handleChange} />
@@ -144,7 +200,7 @@ const UserDetails = () => {
               </Row>
               <Form.Item
                 label="Profile picture"
-                
+
 
               >
                 <Input name="profilePicture" value={formik.values.profilePicture} onBlur={formik.handleBlur} onChange={formik.handleChange} />
