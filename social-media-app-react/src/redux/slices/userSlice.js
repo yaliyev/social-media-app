@@ -17,7 +17,7 @@ const userSlice = createSlice({
             state.user.isLogined = true
             state.user.userObject = action.payload
         },
-        logout:(state,action)=>{
+        sign_out:(state,action)=>{
             state.user.isLogined = false
             state.user.userObject = null
         },
@@ -32,7 +32,7 @@ export const loadUserFromLocalStorage = () => async (dispatch) => {
  
         const storedUserObject = localStorage.getItem('social-media-app-yagub-user-status');
 
-        if (storedUserObject != null) {
+        if (storedUserObject != "null") {
             let storedUserJSObject = JSON.parse(storedUserObject);
             // dispatch(setUserLoading(true)); 
             const response = await getUser(storedUserJSObject); 
@@ -41,6 +41,6 @@ export const loadUserFromLocalStorage = () => async (dispatch) => {
     
 };
 
-export const {sign_in,logout,putUserReducer} = userSlice.actions;
+export const {sign_in,sign_out,putUserReducer} = userSlice.actions;
 
 export default userSlice.reducer;

@@ -12,13 +12,25 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import GroupsIcon from '@mui/icons-material/Groups';
+import { sign_out } from '../redux/slices/userSlice';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 
 const pages = ['Feed', 'Search'];
 const settings = ['Profile','Logout'];
 
+
+
 function Navbar() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
+
+  let user = useSelector((state)=>state.user.user);
+
+let dispatch = useDispatch();
+
+
+const navigateTo = useNavigate();
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -34,6 +46,13 @@ function Navbar() {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
+  const handleLogout = () =>{
+      dispatch(sign_out());
+      localStorage.setItem("social-media-app-yagub-user-status","null");
+      navigateTo("/login");
+      
+      
+  }
 
   return (
     <AppBar position="static" sx={{height:'80px'}}>
@@ -148,7 +167,12 @@ function Navbar() {
               onClose={handleCloseUserMenu}
             >
               {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                <MenuItem key={setting} onClick={() => {
+                  if (setting === 'Logout') {
+                    handleLogout();
+                  }
+                  handleCloseUserMenu();
+                }}>
                   <Typography textAlign="center">{setting}</Typography>
                 </MenuItem>
               ))}
