@@ -1,5 +1,5 @@
 
-import React from 'react'
+import React, { useEffect } from 'react'
 import Swal from 'sweetalert2'
 import { Button, Checkbox, Col, Form, Input, Row, Typography } from 'antd';
 import { Link, useNavigate } from 'react-router-dom';
@@ -12,9 +12,16 @@ const Login = () => {
 
   
   let user = useSelector((state)=>state.user.user);
+
   
   let dispatch = useDispatch();
   const navigateTo = useNavigate();
+
+  useEffect(()=>{
+     if(user.userObject != null){
+      navigateTo("/user")
+     }
+  },[user.userObject])
 
   const formik = useFormik({
     initialValues: {
@@ -39,6 +46,7 @@ const Login = () => {
           html: "User has been logined",
           timer: 1600
         }).then(()=>{
+          localStorage.setItem("social-media-app-yagub-user-status",JSON.stringify({username:userFullData.username}));
           navigateTo("/user");
         })
       }else{

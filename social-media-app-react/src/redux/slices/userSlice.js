@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { getUser } from "../../services/api/user_request";
 
 const initialState = {
     user:{
@@ -26,6 +27,19 @@ const userSlice = createSlice({
         
     }
 })
+
+export const loadUserFromLocalStorage = () => async (dispatch) => {
+ 
+        const storedUserObject = localStorage.getItem('social-media-app-yagub-user-status');
+
+        if (storedUserObject != null) {
+            let storedUserJSObject = JSON.parse(storedUserObject);
+            // dispatch(setUserLoading(true)); 
+            const response = await getUser(storedUserJSObject); 
+            dispatch(putUserReducer(response)); 
+        }
+    
+};
 
 export const {sign_in,logout,putUserReducer} = userSlice.actions;
 
