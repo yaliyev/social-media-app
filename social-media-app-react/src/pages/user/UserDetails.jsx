@@ -8,10 +8,11 @@ import { useNavigate } from 'react-router-dom';
 import { useFormik, useFormikContext } from 'formik';
 import { editUserSchema } from '../../validation/editUserValidation';
 import { isExist, putUser } from '../../services/api/user_request';
-import { putUserReducer } from '../../redux/slices/userSlice';
+import { addPost, putUserReducer } from '../../redux/slices/userSlice';
 import { set_is_user_detail_model_open,set_open_user_posts_modal_open,set_open_user_comments_modal_open,set_open_add_post_modal_open } from '../../redux/slices/userModalSlice';
 import Post from './Post';
 import Comment from './Comment';
+import { addPostSchema } from '../../validation/addPostValidation';
 const { Meta } = Card;
 
 
@@ -160,6 +161,33 @@ const UserDetails = () => {
     },
     validationSchema: editUserSchema
   });
+
+  let addPostFormik = useFormik({
+    initialValues:{
+      postTitle: '',
+      postImage: ''
+    },
+    onSubmit: (values,actions) => {
+
+      const newPost = {
+        id: Date.now(),
+        title: values.postTitle,
+        image: values.postImage
+      }
+
+      const updatedUser = {
+        ...user.userObject,
+        posts: [...user.userObject.posts, newPost]
+      }
+
+      console.log(updatedUser);
+     dispatch(addPost(values));
+    
+
+     putUser(updatedUser);
+    },
+    validationSchema: addPostSchema
+  })
 
   useEffect(() => {
     if (user.userObject == null) {
@@ -335,6 +363,71 @@ const UserDetails = () => {
 
           </Modal>
 
+          <Modal bodyStyle={{ overflow: 'auto', maxHeight: '70vh' }} title={<h3 style={{ textAlign: 'center' }}>Add Post</h3>} open={userModal.openAddPostModalOpen} onCancel={() => { dispatch(set_open_add_post_modal_open(false)) }} footer="" >
+
+
+          <Form
+              name="basic"
+              labelCol={{
+                span: 6,
+              }}
+              wrapperCol={{
+                span: 18,
+              }}
+              style={{
+                maxWidth: 600,
+              }}
+              onFinish={addPostFormik.handleSubmit}
+              onFinishFailed={() => { }}
+              autoComplete="off"
+            >
+              <Form.Item label="Post title">
+
+                <Input name="postTitle" value={addPostFormik.values.postTitle}  onBlur={addPostFormik.handleBlur} onChange={addPostFormik.handleChange} />
+              </Form.Item>
+
+              <Row>
+                <Col style={{ marginTop: '-20px', marginBottom: '10px' }} offset={6} span={4}>
+                  {addPostFormik.errors.postTitle && addPostFormik.touched.postTitle && <div style={{ color: 'red' }}>{addPostFormik.errors.postTitle}</div>}
+                </Col>
+              </Row>
+
+              <Form.Item
+                label="Post image"
+
+
+              >
+                <Input name="postImage" value={addPostFormik.values.postImage} onBlur={addPostFormik.handleBlur} onChange={addPostFormik.handleChange} />
+              </Form.Item>
+              <Row>
+                <Col style={{ marginTop: '-20px', marginBottom: '10px' }} offset={6} span={14}>
+                  {addPostFormik.errors.postImage && addPostFormik.touched.postImage && <div style={{ color: 'red' }}>{addPostFormik.errors.postImage}</div>}
+                </Col>
+              </Row>
+             
+             
+              
+             
+
+
+
+
+
+              <Form.Item
+                wrapperCol={{
+                  offset: 8,
+                  span: 16,
+                }}
+              >
+                <Button type="primary" htmlType="submit">
+                  Submit
+                </Button>
+              </Form.Item>
+            </Form>
+
+
+          </Modal>
+
 
 
           <Row>
@@ -353,7 +446,7 @@ const UserDetails = () => {
                 actions={[
                   <EditOutlined title='Edit User' onClick={() => { dispatch(set_is_user_detail_model_open(true)) }} key="edit" />,
                   <FileImageOutlined title='User posts' onClick={() => { dispatch(set_open_user_posts_modal_open(true)) }} />,
-                  <PlusCircleOutlined title='Add post' />
+                  <PlusCircleOutlined title='Add post' onClick={()=>{dispatch(set_open_add_post_modal_open(true))}} />
                 ]}
               >
                 <Meta
