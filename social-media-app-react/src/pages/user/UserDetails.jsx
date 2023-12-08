@@ -9,7 +9,10 @@ import { useFormik, useFormikContext } from 'formik';
 import { editUserSchema } from '../../validation/editUserValidation';
 import { isExist, putUser } from '../../services/api/user_request';
 import { putUserReducer } from '../../redux/slices/userSlice';
+import Post from './Post';
+import Comment from './Comment';
 const { Meta } = Card;
+
 
 const UserDetails = () => {
 
@@ -19,6 +22,8 @@ const UserDetails = () => {
   let dispatch = useDispatch();
 
   const [isUserDetailModelOpen, setIsUserDetailModelOpen] = useState(false);
+  const [openUserPostsModalOpen, setOpenUserPostsModalOpen] = useState(false);
+  const [openUserCommentsModalOpen,setOpenUserCommentsModalOpen] = useState(false);
   const [resetEditFormCounter, setResetEditFormCounter] = useState(0);
   const navigateTo = useNavigate();
 
@@ -85,41 +90,41 @@ const UserDetails = () => {
             })
           }
         }
-      }else if(user.userObject.username != editedUser.username ){
-       if(!isExistResult.isExistUsername){
-        
-        const responsePutUser = await putUser(editedUser);
+      } else if (user.userObject.username != editedUser.username) {
+        if (!isExistResult.isExistUsername) {
 
-        dispatch(putUserReducer(editedUser));
-        setIsUserDetailModelOpen(false);
-        Swal.fire({
-          icon: "success",
-          title: "Edit user",
-          html: "User details have been changed",
-          timer: 1600
-        })
-       }else{
-        Swal.fire({
-          icon: "error",
-          title: "Register",
-          html: `${editedUser.username} is exist already.Try another username`,
-          timer: 1300
-        })
-       }
-      }else if(user.userObject.email != editedUser.email ){
-        if(!isExistResult.isExistEmail){
-         
-         const responsePutUser = await putUser(editedUser);
- 
-         dispatch(putUserReducer(editedUser));
-         setIsUserDetailModelOpen(false);
-         Swal.fire({
-           icon: "success",
-           title: "Edit user",
-           html: "User details have been changed",
-           timer: 1600
-         })
-        }else{
+          const responsePutUser = await putUser(editedUser);
+
+          dispatch(putUserReducer(editedUser));
+          setIsUserDetailModelOpen(false);
+          Swal.fire({
+            icon: "success",
+            title: "Edit user",
+            html: "User details have been changed",
+            timer: 1600
+          })
+        } else {
+          Swal.fire({
+            icon: "error",
+            title: "Register",
+            html: `${editedUser.username} is exist already.Try another username`,
+            timer: 1300
+          })
+        }
+      } else if (user.userObject.email != editedUser.email) {
+        if (!isExistResult.isExistEmail) {
+
+          const responsePutUser = await putUser(editedUser);
+
+          dispatch(putUserReducer(editedUser));
+          setIsUserDetailModelOpen(false);
+          Swal.fire({
+            icon: "success",
+            title: "Edit user",
+            html: "User details have been changed",
+            timer: 1600
+          })
+        } else {
           Swal.fire({
             icon: "error",
             title: "Register",
@@ -127,9 +132,9 @@ const UserDetails = () => {
             timer: 1300
           })
         }
-       }
-      
-      else{
+      }
+
+      else {
         const responsePutUser = await putUser(editedUser);
 
         dispatch(putUserReducer(editedUser));
@@ -284,6 +289,46 @@ const UserDetails = () => {
               </Form.Item>
             </Form>
           </Modal>
+
+          <Modal bodyStyle={{ overflow: 'auto', maxHeight: '70vh' }} title={<h3 style={{ textAlign: 'center' }}>User posts</h3>} width={1000} open={openUserPostsModalOpen} onCancel={() => { setOpenUserPostsModalOpen(false) }} footer="" >
+
+            <Row style={{marginTop:'15px'}}>
+             
+             <Post setOpenUserCommentsModalOpen={setOpenUserCommentsModalOpen} />
+             <Post/>
+             <Post/>
+             <Post/>
+             <Post/>
+             <Post/>
+             <Post/>
+             <Post/>
+             
+
+            </Row>
+
+          </Modal>
+          <Modal bodyStyle={{ overflow: 'auto', maxHeight: '70vh' }} title={<h3 style={{ textAlign: 'center' }}>Comments</h3>} open={openUserCommentsModalOpen} onCancel={() => {setOpenUserCommentsModalOpen(false)}} footer="" >
+          <Row style={{marginTop:'15px'}}>
+
+             <Comment/>
+
+
+
+            </Row>
+
+            <Row style={{display:'flex',columnGap:'10px',marginTop:'20px'}}>
+              <Col span={20}>
+                
+              <Input placeholder="Type a comment:" />
+              </Col>
+              <Col>
+              <Button type="primary">Add</Button>
+              </Col>
+            </Row>
+
+
+          </Modal>
+
           <Row>
             <Col offset={9}>
               <Card
@@ -299,7 +344,7 @@ const UserDetails = () => {
                 }
                 actions={[
                   <EditOutlined onClick={() => { setIsUserDetailModelOpen(true) }} key="edit" />,
-                  <FileImageOutlined />,
+                  <FileImageOutlined onClick={() => { setOpenUserPostsModalOpen(true) }} />,
                 ]}
               >
                 <Meta
