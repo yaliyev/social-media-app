@@ -1,22 +1,68 @@
 import React from 'react'
 
 import { EditOutlined, EllipsisOutlined, SettingOutlined } from '@ant-design/icons';
-import { Avatar, Card, Col, Divider, Row, Modal, Input, Button } from 'antd';
+import { Avatar, Card, Col, Divider, Row, Modal, Input, Button, Form } from 'antd';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import CommentIcon from '@mui/icons-material/Comment';
 import { useDispatch, useSelector } from 'react-redux';
+import { useFormik } from 'formik';
 import { set_open_user_comments_modal_open } from '../../redux/slices/userModalSlice';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
+import { addComment, addCommentAsync } from '../../redux/slices/userSlice';
+import Comment from './Comment';
 const { Meta } = Card;
 
 
 
-const Post = ({  post }) => {
+const Post = ({ post, postIndex }) => {
+
+    
+
+    const user = useSelector((state) => state.user.user);
+
+    console.log(post);
+    console.log(user);
 
     let userModal = useSelector((state) => state.userModal.modals);
 
     let dispatch = useDispatch();
+
+
+    let addCommentFormik = useFormik({
+        initialValues: {
+            text: ''
+        },
+        onSubmit: async (values, actions) => {
+
+            const newComment = {
+                id: Date.now(),
+                text: values.text,
+                authorId: user.userObject.id
+            }
+           
+            let comments = await dispatch(addCommentAsync({ postIndex: postIndex, comment: newComment }));
+
+           
+// console.log(user.userObject);
+            // console.log(posts);
+            // const updatedUser = {
+            //   ...user.userObject,
+            //   posts: [...user.userObject.posts, newPost]
+            // }
+            // putUser(updatedUser);
+            // actions.resetForm();
+
+            // dispatch(set_open_add_post_modal_open(false))
+            // Swal.fire({
+            //   icon: "success",
+            //   title: "Add post",
+            //   html: "Post has been added",
+            //   timer: 1600
+            // })
+        }
+    })
+
 
 
     return (
@@ -26,7 +72,7 @@ const Post = ({  post }) => {
 
                     {
                         post.comments.map((comment, index) => {
-                            <Comment key={index} comment={comment} />
+                           return <Comment key={index} comment={comment} postIndex={postIndex} />
                         })
                     }
 
@@ -34,17 +80,32 @@ const Post = ({  post }) => {
 
 
                 </Row>
+                <Form
 
-                <Row style={{ display: 'flex', columnGap: '10px', marginTop: '20px' }}>
-                    <Col span={20}>
+                    onFinish={addCommentFormik.handleSubmit}
+                    onFinishFailed={() => { }}
+                    autoComplete="off"
+                    
+                >
+                    <Row style={{ display: 'flex', columnGap: '10px', marginTop: '20px' }}>
 
-                        <Input placeholder="Type a comment:" />
-                    </Col>
-                    <Col>
-                        <Button type="primary">Add</Button>
-                    </Col>
-                </Row>
 
+
+
+                        <Col span={20}>
+
+                            <Input name={'text'} onChange={addCommentFormik.handleChange} value={addCommentFormik.values.text} placeholder="Type a comment:" />
+                        </Col>
+                        <Col>
+                            <Button type="primary" htmlType='submit'>Add</Button>
+                        </Col>
+
+
+
+
+
+                    </Row>
+                </Form>
 
             </Modal>
 

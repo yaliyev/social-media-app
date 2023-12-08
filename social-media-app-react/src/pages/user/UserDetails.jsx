@@ -341,7 +341,7 @@ const UserDetails = () => {
               {
 
                 user.userObject.posts.map((post, index) => {
-                  return <Post key={index} post={post} />
+                  return <Post key={index} post={post} postIndex={index} />
                 })
               }
 

@@ -4,26 +4,31 @@ import { useSelector } from 'react-redux';
 import { getUserById } from '../../services/api/user_request';
 import { useState } from 'react';
 import { useEffect } from 'react';
+import { addComment } from '../../redux/slices/userSlice';
 
-const Comment = ({comment}) => {
+const Comment = ({comment,postIndex}) => {
 
+ 
   const [authorUser,setAuthorUser] = useState(null);
 
   useEffect(()=>{
 
     async function loadAuthorUser(){
       let authorUserObj = await getUserById(comment.authorId); 
+      console.log(authorUserObj);
       setAuthorUser(authorUserObj); 
     }
 
     loadAuthorUser();
   },[]);
+
+  
   
   return (
     <>
-    <Col span={24}>
+    {authorUser ? <Col span={24}>
           <Row>
-            <Col span={10}>
+            <Col style={{marginTop:'15px'}} span={10}>
                 
             <Avatar alt="Remy Sharp" src={authorUser.profilePicture} />
             <b>{authorUser.username}</b>
@@ -34,7 +39,8 @@ const Comment = ({comment}) => {
           </Row>
 
          
-        </Col> 
+        </Col> : <></>  }
+    
     </>
     
 

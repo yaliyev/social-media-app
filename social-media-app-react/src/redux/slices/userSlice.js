@@ -26,12 +26,17 @@ const userSlice = createSlice({
         },
         addPost: (state, action) => {
             state.user.userObject.posts.push(action.payload);
-            console.log(current( state.user.userObject));
+           
            
             // const data = [...state.user.userObject.posts];
             // data.push(action.payload);
             // console.log(data);
             // state.user.userObject.posts = data;
+        },
+        addComment: (state,action) => {
+             state.user.userObject.posts[action.payload.postIndex].comments.push(action.payload.comment);
+
+             console.log( current(state.user.userObject.posts[action.payload.postIndex].comments));
         }
 
     }
@@ -47,6 +52,16 @@ export const addPostAsync = createAsyncThunk(
   }
 );
 
+export const addCommentAsync = createAsyncThunk(
+    "user/addCommentAsync",
+    async (commentData, { dispatch,getState }) => {
+      const {user} = getState();
+      await dispatch(addComment(commentData));
+
+      return user.user.userObject.posts[commentData.postIndex].comments;
+    }
+  );
+
 export const loadUserFromLocalStorage = () => async (dispatch) => {
 
     const storedUserObject = localStorage.getItem('social-media-app-yagub-user-status');
@@ -60,6 +75,6 @@ export const loadUserFromLocalStorage = () => async (dispatch) => {
 
 };
 
-export const { sign_in, sign_out, putUserReducer, addPost } = userSlice.actions;
+export const { sign_in, sign_out, putUserReducer, addPost,addComment } = userSlice.actions;
 
 export default userSlice.reducer;
