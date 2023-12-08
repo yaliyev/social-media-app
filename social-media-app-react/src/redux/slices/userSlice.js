@@ -1,4 +1,4 @@
-import { createSlice,current } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice,current } from "@reduxjs/toolkit";
 import { getUser, getUserById } from "../../services/api/user_request";
 
 const initialState = {
@@ -37,11 +37,21 @@ const userSlice = createSlice({
     }
 })
 
+export const addPostAsync = createAsyncThunk(
+  "user/addPostAsync",
+  async (postData, { dispatch,getState }) => {
+    const {user} = getState();
+    await dispatch(addPost(postData));
+
+    return user.user.userObject.posts;
+  }
+);
+
 export const loadUserFromLocalStorage = () => async (dispatch) => {
 
     const storedUserObject = localStorage.getItem('social-media-app-yagub-user-status');
 
-    if (storedUserObject != "null") {
+    if (storedUserObject != "null" && storedUserObject != null) {
         let storedUserJSObject = JSON.parse(storedUserObject);
         // dispatch(setUserLoading(true)); 
         const response = await getUserById(storedUserJSObject.id);

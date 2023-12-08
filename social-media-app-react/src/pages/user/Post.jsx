@@ -7,28 +7,37 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import CommentIcon from '@mui/icons-material/Comment';
 import { useDispatch, useSelector } from 'react-redux';
 import { set_open_user_comments_modal_open } from '../../redux/slices/userModalSlice';
+import { LazyLoadImage } from 'react-lazy-load-image-component';
 const { Meta } = Card;
 
 
 
-const Post = ({setOpenUserCommentsModalOpen}) => {
-
+const Post = ({reRenderPosts,post}) => {
+console.log(post);
     let userModal = useSelector((state) => state.userModal.modals);
 
   let dispatch = useDispatch();
 
 
     return (
-        <Col span={12}>
+        
+            <Col span={12}>
             <Card
                 style={{
                     width: 400,height:600, margin: '20px'
                 }}
                 cover={
-                    <img
-                        alt="example"
-                        src="https://images.pexels.com/photos/4972660/pexels-photo-4972660.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" style={{height:500,objectFit:'cover'}}
-                    />
+                    // <img
+                    //     alt="example"
+                    //     src={post.image} style={{height:500,objectFit:'cover'}}
+                    // />
+                    
+                    <LazyLoadImage
+                    style={{width:'100%',height:500,objectFit:'cover'}}
+                    effect='blur'
+                    placeholderSrc={post.image}
+                    src={post.image} // use normal <img> attributes as props
+                     />
                 }
                 actions={[
 
@@ -41,7 +50,7 @@ const Post = ({setOpenUserCommentsModalOpen}) => {
 
                     </Col>
                     <Col span={8}>
-                        Post 1
+                        {post.title}
                     </Col>
                     <Col span={8} style={{ display: 'flex', flexDirection: 'row-reverse' }}>
                         <CommentIcon onClick={()=>{dispatch(set_open_user_comments_modal_open(true))}} />
@@ -61,7 +70,9 @@ const Post = ({setOpenUserCommentsModalOpen}) => {
 
             </Card>
 
-        </Col>
+        </Col> 
+        
+        
     )
 }
 

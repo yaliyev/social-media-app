@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { useFormik, useFormikContext } from 'formik';
 import { editUserSchema } from '../../validation/editUserValidation';
 import { isExist, putUser } from '../../services/api/user_request';
-import { addPost, putUserReducer } from '../../redux/slices/userSlice';
+import { addPost, addPostAsync, putUserReducer } from '../../redux/slices/userSlice';
 import { set_is_user_detail_model_open,set_open_user_posts_modal_open,set_open_user_comments_modal_open,set_open_add_post_modal_open } from '../../redux/slices/userModalSlice';
 import Post from './Post';
 import Comment from './Comment';
@@ -27,6 +27,8 @@ const UserDetails = () => {
   // const [openUserPostsModalOpen, setOpenUserPostsModalOpen] = useState(false);
   // const [openUserCommentsModalOpen, setOpenUserCommentsModalOpen] = useState(false);
   // const [openAddPostModalOpen,setOpenAddPostModalOpen] = useState(false);
+
+ 
 
 
 
@@ -167,24 +169,32 @@ const UserDetails = () => {
       postTitle: '',
       postImage: ''
     },
-    onSubmit: (values,actions) => {
+    onSubmit: async(values,actions) => {
 
       const newPost = {
         id: Date.now(),
         title: values.postTitle,
-        image: values.postImage
+        image: values.postImage,
+        likes:[],
+        comments:[]
       }
+    let posts = await dispatch(addPostAsync(newPost));
 
+    console.log(posts);
       const updatedUser = {
         ...user.userObject,
         posts: [...user.userObject.posts, newPost]
       }
-
-      console.log(updatedUser);
-     dispatch(addPost(values));
-    
-
      putUser(updatedUser);
+      actions.resetForm();
+
+      dispatch(set_open_add_post_modal_open(false))
+      Swal.fire({
+        icon: "success",
+        title: "Add post",
+        html: "Post has been added",
+        timer: 1600
+      })
     },
     validationSchema: addPostSchema
   })
@@ -324,18 +334,16 @@ const UserDetails = () => {
             </Form>
           </Modal>
 
-          <Modal bodyStyle={{ overflow: 'auto', maxHeight: '70vh' }} title={<h3 style={{ textAlign: 'center' }}>User posts</h3>} width={1000} open={userModal.openUserPostsModalOpen} onCancel={() => { dispatch(set_open_user_posts_modal_open(false)) }} footer="" >
+          <Modal bodyStyle={{ overflow: 'auto', maxHeight: '70vh' }} title={<h3 style={{ textAlign: 'center' }}>User posts</h3>} width={1000} open={userModal.openUserPostsModalOpen} onCancel={() => { dispatch(set_open_user_posts_modal_open(false));}} footer="" >
 
             <Row style={{ marginTop: '15px' }}>
 
-              <Post/>
-              <Post />
-              <Post />
-              <Post />
-              <Post />
-              <Post />
-              <Post />
-              <Post />
+            {
+              
+              user.userObject.posts.map((post,index)=>{
+                return <Post key={index} post={post} />
+              }) 
+            }
 
 
             </Row>
