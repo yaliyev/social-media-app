@@ -9,7 +9,7 @@ import { useFormik, useFormikContext } from 'formik';
 import { editUserSchema } from '../../validation/editUserValidation';
 import { isExist, putUser } from '../../services/api/user_request';
 import { addPost, addPostAsync, putUserReducer } from '../../redux/slices/userSlice';
-import { set_is_user_detail_model_open,set_open_user_posts_modal_open,set_open_user_comments_modal_open,set_open_add_post_modal_open } from '../../redux/slices/userModalSlice';
+import { set_is_user_detail_model_open, set_open_user_posts_modal_open, set_open_user_comments_modal_open, set_open_add_post_modal_open } from '../../redux/slices/userModalSlice';
 import Post from './Post';
 import Comment from './Comment';
 import { addPostSchema } from '../../validation/addPostValidation';
@@ -28,7 +28,7 @@ const UserDetails = () => {
   // const [openUserCommentsModalOpen, setOpenUserCommentsModalOpen] = useState(false);
   // const [openAddPostModalOpen,setOpenAddPostModalOpen] = useState(false);
 
- 
+
 
 
 
@@ -73,7 +73,7 @@ const UserDetails = () => {
           const responsePutUser = await putUser(editedUser);
 
           dispatch(putUserReducer(editedUser));
-         dispatch(set_is_user_detail_model_open(false));
+          dispatch(set_is_user_detail_model_open(false));
           Swal.fire({
             icon: "success",
             title: "Edit user",
@@ -165,27 +165,27 @@ const UserDetails = () => {
   });
 
   let addPostFormik = useFormik({
-    initialValues:{
+    initialValues: {
       postTitle: '',
       postImage: ''
     },
-    onSubmit: async(values,actions) => {
+    onSubmit: async (values, actions) => {
 
       const newPost = {
         id: Date.now(),
         title: values.postTitle,
         image: values.postImage,
-        likes:[],
-        comments:[]
+        likes: [],
+        comments: []
       }
-    let posts = await dispatch(addPostAsync(newPost));
+      let posts = await dispatch(addPostAsync(newPost));
 
-    console.log(posts);
+      console.log(posts);
       const updatedUser = {
         ...user.userObject,
         posts: [...user.userObject.posts, newPost]
       }
-     putUser(updatedUser);
+      putUser(updatedUser);
       actions.resetForm();
 
       dispatch(set_open_add_post_modal_open(false))
@@ -334,47 +334,27 @@ const UserDetails = () => {
             </Form>
           </Modal>
 
-          <Modal bodyStyle={{ overflow: 'auto', maxHeight: '70vh' }} title={<h3 style={{ textAlign: 'center' }}>User posts</h3>} width={1000} open={userModal.openUserPostsModalOpen} onCancel={() => { dispatch(set_open_user_posts_modal_open(false));}} footer="" >
+          <Modal bodyStyle={{ overflow: 'auto', maxHeight: '70vh' }} title={<h3 style={{ textAlign: 'center' }}>User posts</h3>} width={1000} open={userModal.openUserPostsModalOpen} onCancel={() => { dispatch(set_open_user_posts_modal_open(false)); }} footer="" >
 
             <Row style={{ marginTop: '15px' }}>
 
-            {
-              
-              user.userObject.posts.map((post,index)=>{
-                return <Post key={index} post={post} />
-              }) 
-            }
+              {
+
+                user.userObject.posts.map((post, index) => {
+                  return <Post key={index} post={post} />
+                })
+              }
 
 
             </Row>
 
           </Modal>
-          <Modal bodyStyle={{ overflow: 'auto', maxHeight: '70vh' }} title={<h3 style={{ textAlign: 'center' }}>Comments</h3>} open={userModal.openUserCommentsModalOpen} onCancel={() => { dispatch(set_open_user_comments_modal_open(false)) }} footer="" >
-            <Row style={{ marginTop: '15px' }}>
-
-              <Comment />
-
-
-
-            </Row>
-
-            <Row style={{ display: 'flex', columnGap: '10px', marginTop: '20px' }}>
-              <Col span={20}>
-
-                <Input placeholder="Type a comment:" />
-              </Col>
-              <Col>
-                <Button type="primary">Add</Button>
-              </Col>
-            </Row>
-
-
-          </Modal>
+         
 
           <Modal bodyStyle={{ overflow: 'auto', maxHeight: '70vh' }} title={<h3 style={{ textAlign: 'center' }}>Add Post</h3>} open={userModal.openAddPostModalOpen} onCancel={() => { dispatch(set_open_add_post_modal_open(false)) }} footer="" >
 
 
-          <Form
+            <Form
               name="basic"
               labelCol={{
                 span: 6,
@@ -391,7 +371,7 @@ const UserDetails = () => {
             >
               <Form.Item label="Post title">
 
-                <Input name="postTitle" value={addPostFormik.values.postTitle}  onBlur={addPostFormik.handleBlur} onChange={addPostFormik.handleChange} />
+                <Input name="postTitle" value={addPostFormik.values.postTitle} onBlur={addPostFormik.handleBlur} onChange={addPostFormik.handleChange} />
               </Form.Item>
 
               <Row>
@@ -412,10 +392,10 @@ const UserDetails = () => {
                   {addPostFormik.errors.postImage && addPostFormik.touched.postImage && <div style={{ color: 'red' }}>{addPostFormik.errors.postImage}</div>}
                 </Col>
               </Row>
-             
-             
-              
-             
+
+
+
+
 
 
 
@@ -454,7 +434,7 @@ const UserDetails = () => {
                 actions={[
                   <EditOutlined title='Edit User' onClick={() => { dispatch(set_is_user_detail_model_open(true)) }} key="edit" />,
                   <FileImageOutlined title='User posts' onClick={() => { dispatch(set_open_user_posts_modal_open(true)) }} />,
-                  <PlusCircleOutlined title='Add post' onClick={()=>{dispatch(set_open_add_post_modal_open(true))}} />
+                  <PlusCircleOutlined title='Add post' onClick={() => { dispatch(set_open_add_post_modal_open(true)) }} />
                 ]}
               >
                 <Meta
