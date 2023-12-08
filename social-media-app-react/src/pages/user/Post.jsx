@@ -5,11 +5,19 @@ import { Avatar, Card, Col, Divider, Row } from 'antd';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import CommentIcon from '@mui/icons-material/Comment';
+import { useDispatch, useSelector } from 'react-redux';
+import { set_open_user_comments_modal_open } from '../../redux/slices/userModalSlice';
 const { Meta } = Card;
 
 
 
 const Post = ({setOpenUserCommentsModalOpen}) => {
+
+    let userModal = useSelector((state) => state.userModal.modals);
+
+  let dispatch = useDispatch();
+
+
     return (
         <Col span={12}>
             <Card
@@ -36,7 +44,7 @@ const Post = ({setOpenUserCommentsModalOpen}) => {
                         Post 1
                     </Col>
                     <Col span={8} style={{ display: 'flex', flexDirection: 'row-reverse' }}>
-                        <CommentIcon onClick={()=>{setOpenUserCommentsModalOpen(true)}} />
+                        <CommentIcon onClick={()=>{dispatch(set_open_user_comments_modal_open(true))}} />
                     </Col>
                 </Row>
                 <Row style={{marginTop:'10px'}} gutter={[16, 16]}>

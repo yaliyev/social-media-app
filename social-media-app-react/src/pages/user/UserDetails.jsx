@@ -1,7 +1,7 @@
 import { Button, Col, Modal, Row, Form, Input, Checkbox } from 'antd'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useReducer, useState } from 'react'
 import Swal from 'sweetalert2'
-import { EditOutlined, EllipsisOutlined, SettingOutlined, FileImageOutlined } from '@ant-design/icons';
+import { EditOutlined, EllipsisOutlined, SettingOutlined, FileImageOutlined, PlusCircleOutlined } from '@ant-design/icons';
 import { Avatar, Card } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -9,6 +9,7 @@ import { useFormik, useFormikContext } from 'formik';
 import { editUserSchema } from '../../validation/editUserValidation';
 import { isExist, putUser } from '../../services/api/user_request';
 import { putUserReducer } from '../../redux/slices/userSlice';
+import { set_is_user_detail_model_open,set_open_user_posts_modal_open,set_open_user_comments_modal_open,set_open_add_post_modal_open } from '../../redux/slices/userModalSlice';
 import Post from './Post';
 import Comment from './Comment';
 const { Meta } = Card;
@@ -17,13 +18,18 @@ const { Meta } = Card;
 const UserDetails = () => {
 
   let user = useSelector((state) => state.user.user);
-
+  let userModal = useSelector((state) => state.userModal.modals);
 
   let dispatch = useDispatch();
 
-  const [isUserDetailModelOpen, setIsUserDetailModelOpen] = useState(false);
-  const [openUserPostsModalOpen, setOpenUserPostsModalOpen] = useState(false);
-  const [openUserCommentsModalOpen,setOpenUserCommentsModalOpen] = useState(false);
+  // const [isUserDetailModelOpen, setIsUserDetailModelOpen] = useState(false);
+  // const [openUserPostsModalOpen, setOpenUserPostsModalOpen] = useState(false);
+  // const [openUserCommentsModalOpen, setOpenUserCommentsModalOpen] = useState(false);
+  // const [openAddPostModalOpen,setOpenAddPostModalOpen] = useState(false);
+
+
+
+
   const [resetEditFormCounter, setResetEditFormCounter] = useState(0);
   const navigateTo = useNavigate();
 
@@ -64,7 +70,7 @@ const UserDetails = () => {
           const responsePutUser = await putUser(editedUser);
 
           dispatch(putUserReducer(editedUser));
-          setIsUserDetailModelOpen(false);
+         dispatch(set_is_user_detail_model_open(false));
           Swal.fire({
             icon: "success",
             title: "Edit user",
@@ -96,7 +102,7 @@ const UserDetails = () => {
           const responsePutUser = await putUser(editedUser);
 
           dispatch(putUserReducer(editedUser));
-          setIsUserDetailModelOpen(false);
+          dispatch(set_is_user_detail_model_open(false));
           Swal.fire({
             icon: "success",
             title: "Edit user",
@@ -117,7 +123,7 @@ const UserDetails = () => {
           const responsePutUser = await putUser(editedUser);
 
           dispatch(putUserReducer(editedUser));
-          setIsUserDetailModelOpen(false);
+          dispatch(set_is_user_detail_model_open(false));
           Swal.fire({
             icon: "success",
             title: "Edit user",
@@ -138,7 +144,7 @@ const UserDetails = () => {
         const responsePutUser = await putUser(editedUser);
 
         dispatch(putUserReducer(editedUser));
-        setIsUserDetailModelOpen(false);
+        dispatch(set_is_user_detail_model_open(false));
         Swal.fire({
           icon: "success",
           title: "Edit user",
@@ -182,7 +188,7 @@ const UserDetails = () => {
       {user.userObject ?
         <>
 
-          <Modal title={<h3 style={{ textAlign: 'center' }}>Edit User</h3>} open={isUserDetailModelOpen} onCancel={() => { setIsUserDetailModelOpen(false), setResetEditFormCounter(resetEditFormCounter + 1) }} footer="" >
+          <Modal title={<h3 style={{ textAlign: 'center' }}>Edit User</h3>} open={userModal.isUserDetailModelOpen} onCancel={() => { dispatch(set_is_user_detail_model_open(false)), setResetEditFormCounter(resetEditFormCounter + 1) }} footer="" >
             <Form
               name="basic"
               labelCol={{
@@ -290,44 +296,46 @@ const UserDetails = () => {
             </Form>
           </Modal>
 
-          <Modal bodyStyle={{ overflow: 'auto', maxHeight: '70vh' }} title={<h3 style={{ textAlign: 'center' }}>User posts</h3>} width={1000} open={openUserPostsModalOpen} onCancel={() => { setOpenUserPostsModalOpen(false) }} footer="" >
+          <Modal bodyStyle={{ overflow: 'auto', maxHeight: '70vh' }} title={<h3 style={{ textAlign: 'center' }}>User posts</h3>} width={1000} open={userModal.openUserPostsModalOpen} onCancel={() => { dispatch(set_open_user_posts_modal_open(false)) }} footer="" >
 
-            <Row style={{marginTop:'15px'}}>
-             
-             <Post setOpenUserCommentsModalOpen={setOpenUserCommentsModalOpen} />
-             <Post/>
-             <Post/>
-             <Post/>
-             <Post/>
-             <Post/>
-             <Post/>
-             <Post/>
-             
+            <Row style={{ marginTop: '15px' }}>
+
+              <Post/>
+              <Post />
+              <Post />
+              <Post />
+              <Post />
+              <Post />
+              <Post />
+              <Post />
+
 
             </Row>
 
           </Modal>
-          <Modal bodyStyle={{ overflow: 'auto', maxHeight: '70vh' }} title={<h3 style={{ textAlign: 'center' }}>Comments</h3>} open={openUserCommentsModalOpen} onCancel={() => {setOpenUserCommentsModalOpen(false)}} footer="" >
-          <Row style={{marginTop:'15px'}}>
+          <Modal bodyStyle={{ overflow: 'auto', maxHeight: '70vh' }} title={<h3 style={{ textAlign: 'center' }}>Comments</h3>} open={userModal.openUserCommentsModalOpen} onCancel={() => { dispatch(set_open_user_comments_modal_open(false)) }} footer="" >
+            <Row style={{ marginTop: '15px' }}>
 
-             <Comment/>
+              <Comment />
 
 
 
             </Row>
 
-            <Row style={{display:'flex',columnGap:'10px',marginTop:'20px'}}>
+            <Row style={{ display: 'flex', columnGap: '10px', marginTop: '20px' }}>
               <Col span={20}>
-                
-              <Input placeholder="Type a comment:" />
+
+                <Input placeholder="Type a comment:" />
               </Col>
               <Col>
-              <Button type="primary">Add</Button>
+                <Button type="primary">Add</Button>
               </Col>
             </Row>
 
 
           </Modal>
+
+
 
           <Row>
             <Col offset={9}>
@@ -343,8 +351,9 @@ const UserDetails = () => {
                   />
                 }
                 actions={[
-                  <EditOutlined onClick={() => { setIsUserDetailModelOpen(true) }} key="edit" />,
-                  <FileImageOutlined onClick={() => { setOpenUserPostsModalOpen(true) }} />,
+                  <EditOutlined title='Edit User' onClick={() => { dispatch(set_is_user_detail_model_open(true)) }} key="edit" />,
+                  <FileImageOutlined title='User posts' onClick={() => { dispatch(set_open_user_posts_modal_open(true)) }} />,
+                  <PlusCircleOutlined title='Add post' />
                 ]}
               >
                 <Meta
