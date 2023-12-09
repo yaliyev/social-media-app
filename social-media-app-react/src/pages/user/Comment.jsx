@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { useEffect } from 'react';
 import { addComment } from '../../redux/slices/userSlice';
 
-const Comment = ({comment,postIndex}) => {
+const Comment = ({comment}) => {
 
  
   const [authorUser,setAuthorUser] = useState(null);

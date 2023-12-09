@@ -5,7 +5,10 @@ const initialState = {
     user: {
         isLogined: false,
         userObject: null,
-        loading: false
+        loading: false,
+        currentPost : {comments:[]},
+        currentPostIndex : -1
+        
     }
 }
 
@@ -36,7 +39,20 @@ const userSlice = createSlice({
         addComment: (state,action) => {
              state.user.userObject.posts[action.payload.postIndex].comments.push(action.payload.comment);
 
-             console.log( current(state.user.userObject.posts[action.payload.postIndex].comments));
+             
+             console.log( current(state.user.userObject.posts[action.payload.postIndex]));
+             state.user.currentPost = state.user.userObject.posts[action.payload.postIndex];
+
+             
+        },
+        setCurrentPost: (state,action) =>{
+            state.user.currentPost = action.payload;
+        },
+        getCurrentPost: (state,action) =>{
+            return state.user.currentPost;
+        },
+        setCurrentPostIndex: (state,action) =>{
+            state.user.currentPostIndex = action.payload;
         }
 
     }
@@ -47,7 +63,6 @@ export const addPostAsync = createAsyncThunk(
   async (postData, { dispatch,getState }) => {
     const {user} = getState();
     await dispatch(addPost(postData));
-
     return user.user.userObject.posts;
   }
 );
@@ -56,8 +71,8 @@ export const addCommentAsync = createAsyncThunk(
     "user/addCommentAsync",
     async (commentData, { dispatch,getState }) => {
       const {user} = getState();
-      await dispatch(addComment(commentData));
-
+     dispatch(addComment(commentData));
+    
       return user.user.userObject.posts[commentData.postIndex].comments;
     }
   );
@@ -75,6 +90,6 @@ export const loadUserFromLocalStorage = () => async (dispatch) => {
 
 };
 
-export const { sign_in, sign_out, putUserReducer, addPost,addComment } = userSlice.actions;
+export const { sign_in, sign_out, putUserReducer, addPost,addComment,setCurrentPost,setCurrentPostIndex } = userSlice.actions;
 
 export default userSlice.reducer;

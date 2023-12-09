@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { useFormik, useFormikContext } from 'formik';
 import { editUserSchema } from '../../validation/editUserValidation';
 import { isExist, putUser } from '../../services/api/user_request';
-import { addPost, addPostAsync, putUserReducer } from '../../redux/slices/userSlice';
+import { addCommentAsync, addPost, addPostAsync, putUserReducer } from '../../redux/slices/userSlice';
 import { set_is_user_detail_model_open, set_open_user_posts_modal_open, set_open_user_comments_modal_open, set_open_add_post_modal_open } from '../../redux/slices/userModalSlice';
 import Post from './Post';
 import Comment from './Comment';
@@ -199,6 +199,46 @@ const UserDetails = () => {
     validationSchema: addPostSchema
   })
 
+  let addCommentFormik = useFormik({
+    initialValues: {
+        text: ''
+    },
+    onSubmit: async (values, actions) => {
+
+        const newComment = {
+            id: Date.now(),
+            text: values.text,
+            authorId: user.userObject.id
+        }
+       
+        let comments = await dispatch(addCommentAsync({ postIndex: user.currentPostIndex, comment: newComment }));
+
+        let editedPosts = [...user.userObject.posts];
+        const updatedPost = {
+          ...editedPosts[user.currentPostIndex],
+          comments: [...editedPosts[user.currentPostIndex].comments, { ...newComment }]
+        };
+        editedPosts[user.currentPostIndex] = updatedPost;
+      
+        const updatedUser = {
+          ...user.userObject,
+          posts: editedPosts
+        };
+
+       
+         putUser(updatedUser);
+        actions.resetForm();
+
+         
+        Swal.fire({
+          icon: "success",
+          title: "Add Comment",
+          html: "Comment has been added",
+          timer: 1600
+        })
+    }
+})
+
   useEffect(() => {
     if (user.userObject == null) {
 
@@ -349,6 +389,48 @@ const UserDetails = () => {
             </Row>
 
           </Modal>
+
+          <Modal bodyStyle={{ overflow: 'auto', maxHeight: '70vh' }} title={<h3 style={{ textAlign: 'center' }}>Comments</h3>} open={userModal.openUserCommentsModalOpen} onCancel={() => { dispatch(set_open_user_comments_modal_open(false)) }} footer="" >
+                <Row style={{ marginTop: '15px' }}>
+
+                    {
+                        user.currentPost.comments.map((comment, index) => {
+                           return <Comment key={index} comment={comment}  />
+                        })
+                    }
+
+
+
+
+                </Row>
+                <Form
+
+                    onFinish={addCommentFormik.handleSubmit}
+                    onFinishFailed={() => { }}
+                    autoComplete="off"
+                    
+                >
+                    <Row style={{ display: 'flex', columnGap: '10px', marginTop: '20px' }}>
+
+
+
+
+                        <Col span={20}>
+
+                            <Input name={'text'} onChange={addCommentFormik.handleChange} value={addCommentFormik.values.text} placeholder="Type a comment:" />
+                        </Col>
+                        <Col>
+                            <Button type="primary" htmlType='submit'>Add</Button>
+                        </Col>
+
+
+
+
+
+                    </Row>
+                </Form>
+
+            </Modal>
          
 
           <Modal bodyStyle={{ overflow: 'auto', maxHeight: '70vh' }} title={<h3 style={{ textAlign: 'center' }}>Add Post</h3>} open={userModal.openAddPostModalOpen} onCancel={() => { dispatch(set_open_add_post_modal_open(false)) }} footer="" >
