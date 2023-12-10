@@ -17,7 +17,7 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
 const pages = ['Feed', 'Search'];
-const settings = ['Profile','Logout'];
+const settings = ['Profile','Requests','Logout'];
 
 
 
@@ -57,6 +57,10 @@ const navigateTo = useNavigate();
 
   const handleProfile = () =>{
     navigateTo("/user");
+  }
+
+  const handleRequests = () =>{
+    navigateTo("/user/requests");
   }
 
   return (
@@ -176,6 +180,9 @@ const navigateTo = useNavigate();
               <MenuItem key={setting} onClick={() => {
                 if (setting === 'Logout') {
                   handleLogout();
+                }
+                if(setting === 'Requests'){
+                  handleRequests();
                 }
                 if(setting === 'Profile'){
                   handleProfile();

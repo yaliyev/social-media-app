@@ -4,6 +4,7 @@ import Register from "../pages/Register";
 import UserRoot from "../pages/user/UserRoot";
 import UserDetails from "../pages/user/UserDetails";
 import SearchUsers from "../pages/user/SearchUsers";
+import Requests from "../pages/user/Requests";
 
 export const ROUTES =[
   {
@@ -29,6 +30,10 @@ export const ROUTES =[
       {
         path:'/user/search',
         element: <SearchUsers/>
+      },
+      {
+        path:'/user/requests',
+        element:<Requests/>
       }
     ]
   }

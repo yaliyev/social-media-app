@@ -6,7 +6,7 @@ import { FileImageOutlined } from '@ant-design/icons';
 import Meta from 'antd/es/card/Meta';
 import FollowButton from '../../components/buttons/FollowButton';
 import UnfollowButton from '../../components/buttons/UnfollowButton';
-import { getUsers } from '../../services/api/user_request';
+import { getUserById, getUsers, putUser } from '../../services/api/user_request';
 import PendingButton from '../../components/buttons/PendingButton';
 
 const SearchUsers = () => {
@@ -45,6 +45,52 @@ const SearchUsers = () => {
       loadUsers();
     }
   }, [])
+
+  async function sendFollowRequest(personWhoWillCheckRequestId){
+
+    
+
+    const thisUserId = user.userObject.id;
+
+    const personWhoWillCheckRequest = await getUserById(personWhoWillCheckRequestId);
+
+    let isExistThisPerson = personWhoWillCheckRequest.requests.find((iteratedUser)=>iteratedUser.id == thisUserId);
+
+    if(isExistThisPerson == undefined){
+      let newPersonWhoWillCheckRequest = {
+        ...personWhoWillCheckRequest,
+        requests: [...personWhoWillCheckRequest.requests,{id:thisUserId,status:'pending'}]
+      }
+      
+      let thisUser = user.userObject;
+      let newThisUser = {
+        ...thisUser,
+        requests: [...thisUser.requests,{id:personWhoWillCheckRequestId,status:'sent'}]
+      }
+      
+      putUser(newPersonWhoWillCheckRequest)
+      putUser(newThisUser)
+
+      let newPersonWhoWillCheckRequestInSearchUsersIndex = -1;
+
+      searchUsers.find((iteratedUser,index)=>{
+          if(iteratedUser.id == newPersonWhoWillCheckRequest.id){
+            newPersonWhoWillCheckRequestInSearchUsersIndex = index;
+          }
+      })
+
+      const newSearchUsers = [...searchUsers];
+
+      newSearchUsers[newPersonWhoWillCheckRequestInSearchUsersIndex] = newPersonWhoWillCheckRequest;
+
+      setSearchUsers(newSearchUsers);
+      
+      
+    }
+
+
+
+  }
 
 
   return (
@@ -109,7 +155,14 @@ const SearchUsers = () => {
 
                 <Meta
 
-                  description={<div style={{ display: 'flex', justifyContent: 'center' }}> <FollowButton/> </div>}
+onClick={()=>{sendFollowRequest(iteratedUser.id)}}
+                  description={<div style={{ display: 'flex', justifyContent: 'center' }}>
+                  {iteratedUser.requests.some((request) => request.id === user.userObject.id) ? (
+                    <PendingButton />
+                  ) : (
+                    <FollowButton />
+                  )}
+                </div>}
                 />
               </Card>
             </Col>
