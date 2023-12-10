@@ -4,9 +4,10 @@ import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { FileImageOutlined } from '@ant-design/icons';
 import Meta from 'antd/es/card/Meta';
-import FollowButton from '../../components/FollowButton';
-import UnfollowButton from '../../components/UnfollowButton';
+import FollowButton from '../../components/buttons/FollowButton';
+import UnfollowButton from '../../components/buttons/UnfollowButton';
 import { getUsers } from '../../services/api/user_request';
+import PendingButton from '../../components/buttons/PendingButton';
 
 const SearchUsers = () => {
 
@@ -24,13 +25,15 @@ const SearchUsers = () => {
     async function loadUsers() {
       let data = await getUsers();
 
-      let thisUserIndex = data.find((dataResultIterated, index) => {
+      let thisUserIndex = -1;
+      data.find((dataResultIterated, index) => {
+       
         if (dataResultIterated.username == user.userObject.username) {
-          return index;
+          thisUserIndex = index;
         }
       })
+     
       data.splice(thisUserIndex, 1);
-
       setUsers(data);
     }
 
@@ -106,7 +109,7 @@ const SearchUsers = () => {
 
                 <Meta
 
-                  description={<div style={{ display: 'flex', justifyContent: 'center' }}> <FollowButton /> </div>}
+                  description={<div style={{ display: 'flex', justifyContent: 'center' }}> <FollowButton/> </div>}
                 />
               </Card>
             </Col>

@@ -13,6 +13,8 @@ import { set_is_user_detail_model_open, set_open_user_posts_modal_open, set_open
 import Post from './Post';
 import Comment from './Comment';
 import { addPostSchema } from '../../validation/addPostValidation';
+import { Height } from '@mui/icons-material';
+import { height } from '@mui/system';
 const { Meta } = Card;
 
 
@@ -261,7 +263,7 @@ const UserDetails = () => {
 
 
   return (
-    <Col span={24} style={{ paddingTop: '100px' }}>
+    <Col span={24} style={{ paddingTop: '30px' }}>
 
       {user.userObject ?
         <>
@@ -374,7 +376,7 @@ const UserDetails = () => {
             </Form>
           </Modal>
 
-          <Modal bodyStyle={{ overflow: 'auto', maxHeight: '70vh' }} title={<h3 style={{ textAlign: 'center' }}>User posts</h3>} width={1000} open={userModal.openUserPostsModalOpen} onCancel={() => { dispatch(set_open_user_posts_modal_open(false)); }} footer="" >
+          <Modal bodyStyle={{ overflow: 'auto', height: '67vh' }} title={<h3 style={{ textAlign: 'center' }}>User posts</h3>} width={1000} open={userModal.openUserPostsModalOpen} onCancel={() => { dispatch(set_open_user_posts_modal_open(false)); }} footer="" >
 
             <Row style={{ marginTop: '15px' }}>
 
@@ -504,13 +506,14 @@ const UserDetails = () => {
             <Col offset={9}>
               <Card
                 style={{
-                  width: '400px',
+                  width: '400px'
                 }}
                 cover={
 
                   <img
                     alt="example"
                     src={user.userObject.profilePicture}
+                    style={{height:'370px',objectFit:'cover'}}
                   />
                 }
                 actions={[

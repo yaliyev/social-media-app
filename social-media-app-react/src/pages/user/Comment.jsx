@@ -25,9 +25,9 @@ const Comment = ({comment}) => {
   
   return (
     <>
-    {authorUser ? <Col span={24}>
+    {authorUser ? <Col style={{marginTop:'15px'}} span={24}>
           <Row>
-            <Col style={{marginTop:'15px'}} span={10}>
+            <Col  span={10}>
                 
             <Avatar alt="Remy Sharp" src={authorUser.profilePicture} />
             <b>{authorUser.username}</b>

@@ -38,7 +38,7 @@ const Post = ({ post, postIndex }) => {
             <Col span={12}>
                 <Card
                     style={{
-                        width: 400, height: 600, margin: '20px'
+                        width: 400, height: 470, margin: '20px'
                     }}
                     cover={
                         // <img
@@ -47,7 +47,7 @@ const Post = ({ post, postIndex }) => {
                         // />
 
                         <LazyLoadImage
-                            style={{ width: '100%', height: 500, objectFit: 'cover' }}
+                            style={{ width: '100%', height: 350, objectFit: 'cover' }}
                             effect='blur'
                             placeholderSrc={post.image}
                             src={post.image} // use normal <img> attributes as props
