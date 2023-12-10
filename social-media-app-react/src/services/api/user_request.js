@@ -30,6 +30,13 @@ async function getUser(user){
     return resultUser;
 
 }
+
+async function getUsers(){
+  let data = await axios.get(API_URL).then(response => response.data);
+
+  return data;
+}
+
 async function getUserById(id){
     let data = await axios.get(API_URL).then(response=>response.data);
     let resultUser = data.find((userIterated)=>userIterated.id == id);
@@ -55,5 +62,5 @@ async function isExist(user){
 }
 
 
-export {register,login,isExist,getUser,getUserById,putUser}
+export {register,login,isExist,getUser,getUserById,putUser,getUsers}
 
