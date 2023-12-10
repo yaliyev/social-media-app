@@ -1,9 +1,9 @@
 import Login from "../pages/Login";
 import Register from "../pages/Register";
-import SessionChecker from "../pages/SessionChecker";
 
 import UserRoot from "../pages/user/UserRoot";
 import UserDetails from "../pages/user/UserDetails";
+import SearchUsers from "../pages/user/SearchUsers";
 
 export const ROUTES =[
   {
@@ -25,7 +25,12 @@ export const ROUTES =[
       {
         index:true,
         element:<UserDetails/>
+      },
+      {
+        path:'/user/search',
+        element: <SearchUsers/>
       }
     ]
   }
+  
 ];

@@ -15,7 +15,6 @@ const Comment = ({comment}) => {
 
     async function loadAuthorUser(){
       let authorUserObj = await getUserById(comment.authorId); 
-      console.log(authorUserObj);
       setAuthorUser(authorUserObj); 
     }
 

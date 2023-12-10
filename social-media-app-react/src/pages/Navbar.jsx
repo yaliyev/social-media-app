@@ -41,6 +41,7 @@ const navigateTo = useNavigate();
 
   const handleCloseNavMenu = () => {
     setAnchorElNav(null);
+    navigateTo("/user/search");
   };
 
   const handleCloseUserMenu = () => {
@@ -52,6 +53,10 @@ const navigateTo = useNavigate();
       navigateTo("/login");
       
       
+  }
+
+  const handleProfile = () =>{
+    navigateTo("/user");
   }
 
   return (
@@ -171,6 +176,9 @@ const navigateTo = useNavigate();
               <MenuItem key={setting} onClick={() => {
                 if (setting === 'Logout') {
                   handleLogout();
+                }
+                if(setting === 'Profile'){
+                  handleProfile();
                 }
                 handleCloseUserMenu();
               }}>
