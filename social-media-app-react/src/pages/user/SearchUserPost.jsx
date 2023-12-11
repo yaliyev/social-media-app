@@ -7,7 +7,7 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import CommentIcon from '@mui/icons-material/Comment';
 import { useDispatch, useSelector } from 'react-redux';
 import { useFormik } from 'formik';
-import { setCurrentPost } from '../../redux/slices/clickedSearchUserSlice';
+import { putClickedSearchUserReducer, setCurrentPost } from '../../redux/slices/clickedSearchUserSlice';
 import { setCurrentPostIndex } from '../../redux/slices/clickedSearchUserSlice';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import Comment from './Comment';
@@ -22,7 +22,7 @@ const SearchUserPost = ({ post, postIndex }) => {
 
 
     const user = useSelector((state) => state.user.user);
-
+    let clickedSearchUser = useSelector((state) => state.clickedSearchUser.clickedSearchUser);
 
     let userModal = useSelector((state) => state.userModal.modals);
 
@@ -40,25 +40,23 @@ const SearchUserPost = ({ post, postIndex }) => {
 
             thisPostLikes.push({ id: user.userObject.id });
 
-            const thisUserPosts = [...user.userObject.posts];
+            const ownerUserPosts = [...clickedSearchUser.userObject.posts];
 
-            thisUserPosts[postIndex] = {
-                ...thisUserPosts[postIndex],
+            ownerUserPosts[postIndex] = {
+                ...ownerUserPosts[postIndex],
                 likes: [...thisPostLikes]
             };
 
-            const newThisUser = {
-                ...user.userObject,
-                posts: [...thisUserPosts]
+            const newOwnerUser = {
+                ...clickedSearchUser.userObject,
+                posts: [...ownerUserPosts]
             }
 
-            await putUser(newThisUser);
+            
 
-            await dispatch(putUserReducer(newThisUser));
+            await putUser(newOwnerUser);
 
-
-
-
+            await dispatch(putClickedSearchUserReducer(newOwnerUser));
 
         }
 
@@ -83,23 +81,22 @@ const SearchUserPost = ({ post, postIndex }) => {
 
             
 
-            const thisUserPosts = [...user.userObject.posts];
+            const ownerUserPosts = [...clickedSearchUser.userObject.posts];
 
-            thisUserPosts[postIndex] = {
-                ...thisUserPosts[postIndex],
+            ownerUserPosts[postIndex] = {
+                ...ownerUserPosts[postIndex],
                 likes: [...thisPostLikes]
             };
 
-            const newThisUser = {
-                ...user.userObject,
-                posts: [...thisUserPosts]
-            }
+            const newOwnerUser = {
+                ...clickedSearchUser.userObject,
+                posts: [...ownerUserPosts]
+            }            
+            await putUser(newOwnerUser);
 
-            
+            await dispatch(putClickedSearchUserReducer(newOwnerUser));
 
-            await putUser(newThisUser);
 
-            await dispatch(putUserReducer(newThisUser));
     }
 
 
