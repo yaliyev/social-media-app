@@ -67,7 +67,7 @@ const SearchUsers = () => {
         ...thisUser,
         requests: [...thisUser.requests,{id:personWhoWillCheckRequestId,status:'sent'}]
       }
-      
+      console.log(newThisUser);
       putUser(newPersonWhoWillCheckRequest)
       putUser(newThisUser)
 
