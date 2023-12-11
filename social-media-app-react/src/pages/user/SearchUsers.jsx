@@ -160,7 +160,7 @@ const SearchUsers = () => {
                         <UnfollowButton userId={iteratedUser.id}
                         searchUsers={searchUsers}
                         setSearchUsers={setSearchUsers} />
-                      ) : iteratedUser.requests.some((request) => request.id === user.userObject.id) ? (
+                      ) : iteratedUser.requests.some((request) => request.id === user.userObject.id && request.status == 'pending' ) ? (
                         <PendingButton />
                       ) : (
                         <FollowButton

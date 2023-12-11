@@ -16,7 +16,7 @@ const FollowButton = ({userId,searchUsers,setSearchUsers}) => {
 
     const personWhoWillCheckRequest = await getUserById(personWhoWillCheckRequestId);
 
-    let isExistThisPerson = personWhoWillCheckRequest.requests.find((iteratedUser)=>iteratedUser.id == thisUserId);
+    let isExistThisPerson = personWhoWillCheckRequest.requests.find((iteratedUser)=>iteratedUser.id == thisUserId && iteratedUser.status == 'pending');
 
     if(isExistThisPerson == undefined){
       let newPersonWhoWillCheckRequest = {
