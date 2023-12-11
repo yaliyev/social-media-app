@@ -92,7 +92,7 @@ const Requests = () => {
       if (requestWhichMustBeDeletedFromThisUserRequestIndex != -1) {
        
          const dataRequests = [...thisUser.requests];
-         console.log(dataRequests);
+         
          dataRequests.splice(Number(requestWhichMustBeDeletedFromThisUserRequestIndex),1)
         
          const newThisUser  = {
@@ -116,16 +116,68 @@ const Requests = () => {
 
 
     }
+  }
+
+ async function declineRequest(followerUserId){
+
+    const thisUserId = user.userObject.id;
+
+    const followerUser = await getUserById(followerUserId);
+    
+    let requestWhichMustBeDeletedFromFollowerUserRequestIndex = -1;
+
+
+    followerUser.requests.find((iteratedRequest, index) => {
+      if (iteratedRequest.id == thisUserId && iteratedRequest.status == 'sent') {
+        requestWhichMustBeDeletedFromFollowerUserRequestIndex = index;
+      }
+    })
+
+    if (requestWhichMustBeDeletedFromFollowerUserRequestIndex != -1) {
+      followerUser.requests.splice(requestWhichMustBeDeletedFromFollowerUserRequestIndex, 1);
+
+
+      const thisUser = { ...user.userObject };
+
+      let requestWhichMustBeDeletedFromThisUserRequestIndex = -1;
+
+      
+      thisUser.requests.find((iteratedRequestThisUser, index) => {
+        
+        if (iteratedRequestThisUser.id == followerUserId && iteratedRequestThisUser.status == 'pending') {
+          requestWhichMustBeDeletedFromThisUserRequestIndex = index;
+        }
+      })
+      
+      if (requestWhichMustBeDeletedFromThisUserRequestIndex != -1) {
+       
+         const dataRequests = [...thisUser.requests];
+         dataRequests.splice(Number(requestWhichMustBeDeletedFromThisUserRequestIndex),1)
+        
+         const newThisUser  = {
+          ...thisUser,
+          requests: dataRequests         
+         }
+       
+         dispatch(putUserReducer(newThisUser))
+         putUser(followerUser);
+         putUser(newThisUser);
+         setRequestUsers(newThisUser.requests)
+
+         
+
+
+      }
+
+      
 
 
 
-
-
-
-
-
+    }
 
   }
+
+
 
   return (
     <Col span={24}>
@@ -161,7 +213,7 @@ const Requests = () => {
 
                 <Meta description={<div style={{ display: 'flex', justifyContent: 'center', columnGap: '10px' }}>
                   <Button onClick={() => { acceptRequest(iteratedUser.id) }} type='primary' style={{ backgroundColor: 'green' }} >Accept</Button>
-                  <Button type='primary' style={{ backgroundColor: 'red' }} >Decline</Button> </div>}
+                  <Button onClick={() => { declineRequest(iteratedUser.id) }}  type='primary' style={{ backgroundColor: 'red' }} >Decline</Button> </div>}
                 />
 
 

@@ -27,12 +27,12 @@ const SearchUsers = () => {
 
       let thisUserIndex = -1;
       data.find((dataResultIterated, index) => {
-       
+
         if (dataResultIterated.username == user.userObject.username) {
           thisUserIndex = index;
         }
       })
-     
+
       data.splice(thisUserIndex, 1);
       setUsers(data);
     }
@@ -46,51 +46,51 @@ const SearchUsers = () => {
     }
   }, [])
 
-  async function sendFollowRequest(personWhoWillCheckRequestId){
-
-    
-
-    const thisUserId = user.userObject.id;
-
-    const personWhoWillCheckRequest = await getUserById(personWhoWillCheckRequestId);
-
-    let isExistThisPerson = personWhoWillCheckRequest.requests.find((iteratedUser)=>iteratedUser.id == thisUserId);
-
-    if(isExistThisPerson == undefined){
-      let newPersonWhoWillCheckRequest = {
-        ...personWhoWillCheckRequest,
-        requests: [...personWhoWillCheckRequest.requests,{id:thisUserId,status:'pending'}]
-      }
-      
-      let thisUser = user.userObject;
-      let newThisUser = {
-        ...thisUser,
-        requests: [...thisUser.requests,{id:personWhoWillCheckRequestId,status:'sent'}]
-      }
-      console.log(newThisUser);
-      putUser(newPersonWhoWillCheckRequest)
-      putUser(newThisUser)
-
-      let newPersonWhoWillCheckRequestInSearchUsersIndex = -1;
-
-      searchUsers.find((iteratedUser,index)=>{
-          if(iteratedUser.id == newPersonWhoWillCheckRequest.id){
-            newPersonWhoWillCheckRequestInSearchUsersIndex = index;
-          }
-      })
-
-      const newSearchUsers = [...searchUsers];
-
-      newSearchUsers[newPersonWhoWillCheckRequestInSearchUsersIndex] = newPersonWhoWillCheckRequest;
-
-      setSearchUsers(newSearchUsers);
-      
-      
-    }
+  // async function sendFollowRequest(personWhoWillCheckRequestId){
 
 
 
-  }
+  //   const thisUserId = user.userObject.id;
+
+  //   const personWhoWillCheckRequest = await getUserById(personWhoWillCheckRequestId);
+
+  //   let isExistThisPerson = personWhoWillCheckRequest.requests.find((iteratedUser)=>iteratedUser.id == thisUserId);
+
+  //   if(isExistThisPerson == undefined){
+  //     let newPersonWhoWillCheckRequest = {
+  //       ...personWhoWillCheckRequest,
+  //       requests: [...personWhoWillCheckRequest.requests,{id:thisUserId,status:'pending'}]
+  //     }
+
+  //     let thisUser = user.userObject;
+  //     let newThisUser = {
+  //       ...thisUser,
+  //       requests: [...thisUser.requests,{id:personWhoWillCheckRequestId,status:'sent'}]
+  //     }
+  //     console.log(newThisUser);
+  //     putUser(newPersonWhoWillCheckRequest)
+  //     putUser(newThisUser)
+
+  //     let newPersonWhoWillCheckRequestInSearchUsersIndex = -1;
+
+  //     searchUsers.find((iteratedUser,index)=>{
+  //         if(iteratedUser.id == newPersonWhoWillCheckRequest.id){
+  //           newPersonWhoWillCheckRequestInSearchUsersIndex = index;
+  //         }
+  //     })
+
+  //     const newSearchUsers = [...searchUsers];
+
+  //     newSearchUsers[newPersonWhoWillCheckRequestInSearchUsersIndex] = newPersonWhoWillCheckRequest;
+
+  //     setSearchUsers(newSearchUsers);
+
+
+  //   }
+
+
+
+  // }
 
 
   return (
@@ -154,15 +154,23 @@ const SearchUsers = () => {
 
 
                 <Meta
-
-onClick={()=>{sendFollowRequest(iteratedUser.id)}}
-                  description={<div style={{ display: 'flex', justifyContent: 'center' }}>
-                  {iteratedUser.requests.some((request) => request.id === user.userObject.id) ? (
-                    <PendingButton />
-                  ) : (
-                    <FollowButton />
-                  )}
-                </div>}
+                  description={
+                    <div style={{ display: 'flex', justifyContent: 'center' }}>
+                      {iteratedUser.followers.some((follower) => follower.id === user.userObject.id) ? (
+                        <UnfollowButton userId={iteratedUser.id}
+                        searchUsers={searchUsers}
+                        setSearchUsers={setSearchUsers} />
+                      ) : iteratedUser.requests.some((request) => request.id === user.userObject.id) ? (
+                        <PendingButton />
+                      ) : (
+                        <FollowButton
+                          userId={iteratedUser.id}
+                          searchUsers={searchUsers}
+                          setSearchUsers={setSearchUsers}
+                        />
+                      )}
+                    </div>
+                  }
                 />
               </Card>
             </Col>
