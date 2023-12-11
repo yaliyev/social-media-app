@@ -1,5 +1,6 @@
-import { Button, Card, Col, Input, Modal, Row } from 'antd';
+import { Button, Card, Col, Form, Input, Modal, Row } from 'antd';
 import React, { useEffect, useState } from 'react'
+import Swal from 'sweetalert2'
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { FileImageOutlined } from '@ant-design/icons';
@@ -10,8 +11,12 @@ import { getUserById, getUsers, putUser } from '../../services/api/user_request'
 import PendingButton from '../../components/buttons/PendingButton';
 import PostsButton from '../../components/buttons/PostsButton';
 import Post from './Post';
-import { putClickedSearchUserReducer } from '../../redux/slices/clickedSearchUserSlice';
+import { addCommentAsync, putClickedSearchUserReducer } from '../../redux/slices/clickedSearchUserSlice';
 import { set_open_searchuser_posts_modal_open } from '../../redux/slices/clickedSearchUserModalSlice';
+import { set_open_searchuser_comments_modal_open } from '../../redux/slices/clickedSearchUserModalSlice';
+import SearchUserPost from './SearchUserPost';
+import Comment from './Comment';
+import { useFormik } from 'formik';
 
 const SearchUsers = () => {
 
@@ -54,6 +59,47 @@ const SearchUsers = () => {
     }
   }, [])
 
+  
+  let addCommentFormik = useFormik({
+    initialValues: {
+        text: ''
+    },
+    onSubmit: async (values, actions) => {
+
+        const newComment = {
+            id: Date.now(),
+            text: values.text,
+            authorId: user.userObject.id
+        }
+       
+        let comments = await dispatch(addCommentAsync({ postIndex: clickedSearchUser.currentPostIndex, comment: newComment }));
+
+        let editedPosts = [...clickedSearchUser.userObject.posts];
+        const updatedPost = {
+          ...editedPosts[clickedSearchUser.currentPostIndex],
+          comments: [...editedPosts[clickedSearchUser.currentPostIndex].comments, { ...newComment }]
+        };
+        editedPosts[clickedSearchUser.currentPostIndex] = updatedPost;
+      
+        const updatedUser = {
+          ...clickedSearchUser.userObject,
+          posts: editedPosts
+        };
+
+       
+        putUser(updatedUser);
+        actions.resetForm();
+
+         
+        Swal.fire({
+          icon: "success",
+          title: "Add Comment",
+          html: "Comment has been added",
+          timer: 1600
+        })
+    }
+})
+
 
 
 
@@ -63,21 +109,66 @@ const SearchUsers = () => {
 
       <Col span={24} style={{ marginTop: '20px' }}>
 
-        {clickedSearchUser.userObject ? <Modal bodyStyle={{ overflow: 'auto', height: '67vh' }} title={<h3 style={{ textAlign: 'center' }}>User posts({clickedSearchUser.userObject.username})</h3>} width={1000} open={clickedSearchUserModal.openSearchUserPostsModalOpen} onCancel={() => { dispatch(set_open_searchuser_posts_modal_open(false)) }} footer="" >
+        {clickedSearchUser.userObject ? 
+        <>
+        <Modal bodyStyle={{ overflow: 'auto', height: '67vh' }} title={<h3 style={{ textAlign: 'center' }}>User posts({clickedSearchUser.userObject.username})</h3>} width={1000} open={clickedSearchUserModal.openSearchUserPostsModalOpen} onCancel={() => { dispatch(set_open_searchuser_posts_modal_open(false)) }} footer="" >
 
-          <Row style={{ marginTop: '15px' }}>
+<Row style={{ marginTop: '15px' }}>
 
-            {
+  {
 
-              clickedSearchUser.userObject.posts.map((post, index) => {
-                return <Post key={index} post={post} postIndex={index} />
-              })
-            }
+    clickedSearchUser.userObject.posts.map((post, index) => {
+      return <SearchUserPost key={index} post={post} postIndex={index} />
+    })
+  }
 
 
-          </Row>
+</Row>
 
-        </Modal> :  <></>}
+</Modal>
+<Modal bodyStyle={{ overflow: 'auto', maxHeight: '70vh' }} title={<h3 style={{ textAlign: 'center' }}>Comments</h3>} open={clickedSearchUserModal.openSearchUserCommentsModalOpen} onCancel={() => { dispatch(set_open_searchuser_comments_modal_open(false)) }} footer="" >
+<Row style={{ marginTop: '15px' }}>
+
+   {
+       clickedSearchUser.currentPost.comments.map((comment, index) => {
+          return <Comment key={index} comment={comment}  />
+       })
+   }
+
+
+
+
+</Row>
+<Form
+
+   onFinish={addCommentFormik.handleSubmit}
+   onFinishFailed={() => { }}
+   autoComplete="off"
+   
+>
+   <Row style={{ display: 'flex', columnGap: '10px', marginTop: '20px' }}>
+
+
+
+
+       <Col span={20}>
+
+           <Input name={'text'} onChange={addCommentFormik.handleChange} value={addCommentFormik.values.text} placeholder="Type a comment:" />
+       </Col>
+       <Col>
+           <Button type="primary" htmlType='submit'>Add</Button>
+       </Col>
+
+
+
+
+
+   </Row>
+</Form>
+
+</Modal>
+        </>
+        :  <></>}
 
 
         <Row>
