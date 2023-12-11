@@ -46,51 +46,6 @@ const SearchUsers = () => {
     }
   }, [])
 
-  // async function sendFollowRequest(personWhoWillCheckRequestId){
-
-
-
-  //   const thisUserId = user.userObject.id;
-
-  //   const personWhoWillCheckRequest = await getUserById(personWhoWillCheckRequestId);
-
-  //   let isExistThisPerson = personWhoWillCheckRequest.requests.find((iteratedUser)=>iteratedUser.id == thisUserId);
-
-  //   if(isExistThisPerson == undefined){
-  //     let newPersonWhoWillCheckRequest = {
-  //       ...personWhoWillCheckRequest,
-  //       requests: [...personWhoWillCheckRequest.requests,{id:thisUserId,status:'pending'}]
-  //     }
-
-  //     let thisUser = user.userObject;
-  //     let newThisUser = {
-  //       ...thisUser,
-  //       requests: [...thisUser.requests,{id:personWhoWillCheckRequestId,status:'sent'}]
-  //     }
-  //     console.log(newThisUser);
-  //     putUser(newPersonWhoWillCheckRequest)
-  //     putUser(newThisUser)
-
-  //     let newPersonWhoWillCheckRequestInSearchUsersIndex = -1;
-
-  //     searchUsers.find((iteratedUser,index)=>{
-  //         if(iteratedUser.id == newPersonWhoWillCheckRequest.id){
-  //           newPersonWhoWillCheckRequestInSearchUsersIndex = index;
-  //         }
-  //     })
-
-  //     const newSearchUsers = [...searchUsers];
-
-  //     newSearchUsers[newPersonWhoWillCheckRequestInSearchUsersIndex] = newPersonWhoWillCheckRequest;
-
-  //     setSearchUsers(newSearchUsers);
-
-
-  //   }
-
-
-
-  // }
 
 
   return (
@@ -122,7 +77,7 @@ const SearchUsers = () => {
         <Row style={{ padding: '20px' }}>
 
           {searchUsers.map((iteratedUser) => {
-            return <Col key={iteratedUser.id} span={4} style={{ padding: '10px' }}>
+            return <Col key={iteratedUser.id} span={6} style={{ padding: '10px' }}>
 
               <Card
                 style={{
@@ -132,7 +87,8 @@ const SearchUsers = () => {
 
                   <img
                     alt="example"
-                    src="https://www.iconpacks.net/icons/2/free-user-icon-3296-thumb.png"
+                    src={iteratedUser.profilePicture}
+                    style={{ marginTop: '10px', height: '300px', objectFit: 'contain' }}
                   />
                 }
                 actions={[
@@ -152,16 +108,28 @@ const SearchUsers = () => {
                   description={<p style={{ textAlign: 'center' }}>Followers: {iteratedUser.followers.length}</p>}
                 />
 
+                <Meta
+
+                  description={<p style={{ textAlign: 'center' }}>Followings: {iteratedUser.followings.length}</p>}
+                />
+
+                <Meta
+
+                  description={<p style={{ textAlign: 'center' }}>Posts: {iteratedUser.posts.length}</p>}
+                />
+
 
                 <Meta
                   description={
                     <div style={{ display: 'flex', justifyContent: 'center' }}>
                       {iteratedUser.followers.some((follower) => follower.id === user.userObject.id) ? (
                         <UnfollowButton userId={iteratedUser.id}
+                          searchUsers={searchUsers}
+                          setSearchUsers={setSearchUsers} />
+                      ) : iteratedUser.requests.some((request) => request.id === user.userObject.id && request.status == 'pending') ? (
+                        <PendingButton userId={iteratedUser.id}
                         searchUsers={searchUsers}
-                        setSearchUsers={setSearchUsers} />
-                      ) : iteratedUser.requests.some((request) => request.id === user.userObject.id && request.status == 'pending' ) ? (
-                        <PendingButton />
+                        setSearchUsers={setSearchUsers}  />
                       ) : (
                         <FollowButton
                           userId={iteratedUser.id}

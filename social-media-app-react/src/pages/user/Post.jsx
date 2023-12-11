@@ -76,7 +76,7 @@ const Post = ({ post, postIndex }) => {
                         </Col>
 
                         <Col span={12}>
-                            Comments: <span>2</span>
+                            Comments: <span>{post.comments.length}</span>
                         </Col>
                     </Row>
 
