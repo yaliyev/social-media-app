@@ -8,6 +8,7 @@ import FollowButton from '../../components/buttons/FollowButton';
 import UnfollowButton from '../../components/buttons/UnfollowButton';
 import { getUserById, getUsers, putUser } from '../../services/api/user_request';
 import PendingButton from '../../components/buttons/PendingButton';
+import PostsButton from '../../components/buttons/PostsButton';
 
 const SearchUsers = () => {
 
@@ -100,42 +101,41 @@ const SearchUsers = () => {
 
                 <Meta
                   title={<h3 style={{ textAlign: 'center' }}>{iteratedUser.username}</h3>}
-                  description={<p style={{ textAlign: 'center' }}>{iteratedUser.bio}</p>}
+                  
                 />
 
-                <Meta
+<Meta
 
-                  description={<p style={{ textAlign: 'center' }}>Followers: {iteratedUser.followers.length}</p>}
-                />
+description={<p style={{ textAlign: 'center' }}>Bio: {iteratedUser.bio} ,Followers: {iteratedUser.followers.length} , Followings: {iteratedUser.followings.length} , Posts: {iteratedUser.posts.length}</p>}
+/>
 
-                <Meta
-
-                  description={<p style={{ textAlign: 'center' }}>Followings: {iteratedUser.followings.length}</p>}
-                />
-
-                <Meta
-
-                  description={<p style={{ textAlign: 'center' }}>Posts: {iteratedUser.posts.length}</p>}
-                />
+              
 
 
                 <Meta
                   description={
-                    <div style={{ display: 'flex', justifyContent: 'center' }}>
+                    <div style={{ marginTop:'10px',display: 'flex', justifyContent: 'center' }}>
                       {iteratedUser.followers.some((follower) => follower.id === user.userObject.id) ? (
+                        <>
                         <UnfollowButton userId={iteratedUser.id}
                           searchUsers={searchUsers}
                           setSearchUsers={setSearchUsers} />
+                          {!iteratedUser.isPublic ? <PostsButton/> : <></>  }
+                         
+                        </> 
                       ) : iteratedUser.requests.some((request) => request.id === user.userObject.id && request.status == 'pending') ? (
                         <PendingButton userId={iteratedUser.id}
                         searchUsers={searchUsers}
                         setSearchUsers={setSearchUsers}  />
                       ) : (
+                        <>
                         <FollowButton
                           userId={iteratedUser.id}
                           searchUsers={searchUsers}
                           setSearchUsers={setSearchUsers}
                         />
+                        {iteratedUser.isPublic ? <PostsButton/> : <></>  }
+                        </>
                       )}
                     </div>
                   }

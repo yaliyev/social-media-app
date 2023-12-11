@@ -513,7 +513,7 @@ const UserDetails = () => {
                   <img
                     alt="example"
                     src={user.userObject.profilePicture}
-                    style={{height:'370px',objectFit:'cover'}}
+                    style={{height:'360px',objectFit:'cover'}}
                   />
                 }
                 actions={[
@@ -524,8 +524,16 @@ const UserDetails = () => {
               >
                 <Meta
                   title={<h3 style={{ textAlign: 'center' }}>{user.userObject.username}</h3>}
-                  description={<p style={{ textAlign: 'center' }}>{user.userObject.bio}</p>}
+                  description={<p style={{ textAlign: 'center' }}></p>}
                 />
+
+<Meta
+
+description={<p style={{ textAlign: 'center' }}>Bio: {user.userObject.bio} ,Followers: {user.userObject.followers.length} , Followings: {user.userObject.followings.length} , Posts: {user.userObject.posts.length}</p>}
+/>
+
+
+
               </Card>
             </Col>
           </Row>
