@@ -75,7 +75,10 @@ const Requests = () => {
     if (requestWhichMustBeDeletedFromFollowerUserRequestIndex != -1) {
       followerUser.requests.splice(requestWhichMustBeDeletedFromFollowerUserRequestIndex, 1);
 
-      followerUser.followings.push({ id: thisUserId });
+      const newFollowerUser = {
+        ...followerUser,
+        followings: [...followerUser.followings,{ id: thisUserId }]
+      }
 
       const thisUser = { ...user.userObject };
 
@@ -100,12 +103,13 @@ const Requests = () => {
           requests: dataRequests,
           followers: [...thisUser.followers,{ id: followerUserId }]
          }
-       
-         dispatch(putUserReducer(newThisUser))
-         putUser(followerUser);
-         putUser(newThisUser);
+          
+         
+         await putUser(newThisUser);
+         await putUser(newFollowerUser);
+         
          setRequestUsers(newThisUser.requests)
-
+         dispatch(putUserReducer(newThisUser))
          
 
 
