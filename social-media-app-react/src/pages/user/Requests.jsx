@@ -1,13 +1,16 @@
 import { Button, Card, Col, Row } from 'antd'
 import Meta from 'antd/es/card/Meta';
 import React, { useEffect, useState } from 'react'
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { getUserById, getUsers } from '../../services/api/user_request';
+import { getUserById, getUsers, putUser } from '../../services/api/user_request';
+import { putUserReducer} from '../../redux/slices/userSlice';
 
 const Requests = () => {
 
   let user = useSelector((state) => state.user.user);
+
+  const dispatch = useDispatch();
 
   const [requestUsers, setRequestUsers] = useState([]);
   const [requestsToThisUser, setRequestsToThisUser] = useState([]);
@@ -59,7 +62,7 @@ const Requests = () => {
     const thisUserId = user.userObject.id;
 
     const followerUser = await getUserById(followerUserId);
-    console.log(followerUser);
+    
     let requestWhichMustBeDeletedFromFollowerUserRequestIndex = -1;
 
 
@@ -78,18 +81,37 @@ const Requests = () => {
 
       let requestWhichMustBeDeletedFromThisUserRequestIndex = -1;
 
-      console.log(thisUser);
+      
       thisUser.requests.find((iteratedRequestThisUser, index) => {
-        if (iteratedRequestThisUser.id == thisUserId && iteratedRequestThisUser.status == 'pending') {
+        
+        if (iteratedRequestThisUser.id == followerUserId && iteratedRequestThisUser.status == 'pending') {
           requestWhichMustBeDeletedFromThisUserRequestIndex = index;
         }
       })
+      
       if (requestWhichMustBeDeletedFromThisUserRequestIndex != -1) {
-        thisUser.requests.splice(requestWhichMustBeDeletedFromThisUserRequestIndex, 1);
-        thisUser.followers.push({ id: followerUserId });
+       
+         const dataRequests = [...thisUser.requests];
+         console.log(dataRequests);
+         dataRequests.splice(Number(requestWhichMustBeDeletedFromThisUserRequestIndex),1)
+        
+         const newThisUser  = {
+          ...thisUser,
+          requests: dataRequests,
+          followers: [...thisUser.followers,{ id: followerUserId }]
+         }
+       
+         dispatch(putUserReducer(newThisUser))
+         putUser(followerUser);
+         putUser(newThisUser);
+         setRequestUsers(newThisUser.requests)
+
+         
 
 
       }
+
+      
 
 
 
