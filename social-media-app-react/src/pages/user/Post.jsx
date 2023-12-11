@@ -9,15 +9,16 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useFormik } from 'formik';
 import { set_open_user_comments_modal_open } from '../../redux/slices/userModalSlice';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
-import { addComment, addCommentAsync, setCurrentPost, setCurrentPostIndex } from '../../redux/slices/userSlice';
+import { addComment, addCommentAsync, putUserReducer, setCurrentPost, setCurrentPostIndex } from '../../redux/slices/userSlice';
 import Comment from './Comment';
+import { putUser } from '../../services/api/user_request';
 const { Meta } = Card;
 
 
 
 const Post = ({ post, postIndex }) => {
 
-    
+
 
     const user = useSelector((state) => state.user.user);
 
@@ -27,13 +28,87 @@ const Post = ({ post, postIndex }) => {
     let dispatch = useDispatch();
 
 
-    
+    async function likePost() {
+
+        let thisPost = { ...post };
+
+        let thisUserLikeinThisPost = thisPost.likes.find((like) => like.id === user.userObject.id);
+
+        if (thisUserLikeinThisPost == undefined) {
+            let thisPostLikes = [...thisPost.likes];
+
+            thisPostLikes.push({ id: user.userObject.id });
+
+            const thisUserPosts = [...user.userObject.posts];
+
+            thisUserPosts[postIndex] = {
+                ...thisUserPosts[postIndex],
+                likes: [...thisPostLikes]
+            };
+
+            const newThisUser = {
+                ...user.userObject,
+                posts: [...thisUserPosts]
+            }
+
+            await putUser(newThisUser);
+
+            await dispatch(putUserReducer(newThisUser));
+
+
+
+
+
+        }
+
+    }
+
+    async function dislikePost(){
+        let thisPost = { ...post };
+
+        let thisUserLikeinThisPostIndex = -1;  
+        thisPost.likes.find((like,index) =>{
+            if(like.id === user.userObject.id){
+                thisUserLikeinThisPostIndex = index; 
+            }
+        } );
+
+        if (thisUserLikeinThisPostIndex > -1) {
+            let thisPostLikes = [...thisPost.likes];
+
+            thisPostLikes.splice(thisUserLikeinThisPostIndex,1);
+
+
+
+            
+
+            const thisUserPosts = [...user.userObject.posts];
+
+            thisUserPosts[postIndex] = {
+                ...thisUserPosts[postIndex],
+                likes: [...thisPostLikes]
+            };
+
+            const newThisUser = {
+                ...user.userObject,
+                posts: [...thisUserPosts]
+            }
+
+            
+
+            await putUser(newThisUser);
+
+            await dispatch(putUserReducer(newThisUser));
+    }
+
+
+    }
 
 
 
     return (
         <>
-            
+
 
             <Col span={12}>
                 <Card
@@ -60,19 +135,22 @@ const Post = ({ post, postIndex }) => {
 
                     <Row gutter={[16, 16]}>
                         <Col span={8}>
-                            <FavoriteBorderIcon />
+                            {post.likes.some((like) => like.id === user.userObject.id) ? (
+                                <FavoriteIcon onClick={()=>{dislikePost()}} />
+                            ) : (<FavoriteBorderIcon onClick={() => { likePost() }} />)}
+
 
                         </Col>
                         <Col span={8}>
                             {post.title}
                         </Col>
                         <Col span={8} style={{ display: 'flex', flexDirection: 'row-reverse' }}>
-                            <CommentIcon onClick={() => { dispatch(set_open_user_comments_modal_open(true));dispatch(setCurrentPost(post));dispatch(setCurrentPostIndex(postIndex)) }} />
+                            <CommentIcon onClick={() => { dispatch(set_open_user_comments_modal_open(true)); dispatch(setCurrentPost(post)); dispatch(setCurrentPostIndex(postIndex)) }} />
                         </Col>
                     </Row>
                     <Row style={{ marginTop: '10px' }} gutter={[16, 16]}>
                         <Col span={12}>
-                            Likes: <span>10</span>
+                            Likes: <span>{post.likes.length}</span>
                         </Col>
 
                         <Col span={12}>
