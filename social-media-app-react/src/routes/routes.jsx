@@ -5,6 +5,7 @@ import UserRoot from "../pages/user/UserRoot";
 import UserDetails from "../pages/user/UserDetails";
 import SearchUsers from "../pages/user/SearchUsers";
 import Requests from "../pages/user/Requests";
+import FeedPage from "../pages/user/FeedPage";
 
 export const ROUTES =[
   {
@@ -33,7 +34,11 @@ export const ROUTES =[
       },
       {
         path:'/user/requests',
-        element:<Requests/>
+        element: <Requests/>
+      },
+      {
+        path:'/user/feed',
+        element: <FeedPage/>
       }
     ]
   }
